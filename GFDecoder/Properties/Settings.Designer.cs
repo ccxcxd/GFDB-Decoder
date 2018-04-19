@@ -94,5 +94,17 @@ namespace GFDecoder.Properties {
                 this["processDirName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string textFilePath {
+            get {
+                return ((string)(this["textFilePath"]));
+            }
+            set {
+                this["textFilePath"] = value;
+            }
+        }
     }
 }

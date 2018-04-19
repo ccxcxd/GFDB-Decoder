@@ -20,5 +20,8 @@
     <Setting Name="processDirName" Type="System.String" Scope="User">
       <Value Profile="(Default)">processed</Value>
     </Setting>
+    <Setting Name="textFilePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

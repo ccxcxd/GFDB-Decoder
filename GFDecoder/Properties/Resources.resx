@@ -135,10 +135,22 @@
   <data name="lblSplitText" xml:space="preserve">
     <value>拆分</value>
   </data>
-  <data name="openFileDialogFilter" xml:space="preserve">
+  <data name="openFileDialogJsonFilter" xml:space="preserve">
     <value>json文件 (*.json)|*.json|所有文件 (*.*)|*.*</value>
   </data>
-  <data name="ToolFormText" xml:space="preserve">
+  <data name="toolFormText" xml:space="preserve">
     <value>少女前线Json处理工具</value>
+  </data>
+  <data name="lblTextFileText" xml:space="preserve">
+    <value>文件</value>
+  </data>
+  <data name="openFileDialogAllFilter" xml:space="preserve">
+    <value>所有文件 (*.*)|*.*</value>
+  </data>
+  <data name="tabCatchDataText" xml:space="preserve">
+    <value>catchdata</value>
+  </data>
+  <data name="tabTextText" xml:space="preserve">
+    <value>文本</value>
   </data>
 </root>

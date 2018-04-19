@@ -115,20 +115,56 @@ namespace GFDecoder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 文件.
+        /// </summary>
+        internal static string lblTextFileText {
+            get {
+                return ResourceManager.GetString("lblTextFileText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 所有文件 (*.*)|*.*.
+        /// </summary>
+        internal static string openFileDialogAllFilter {
+            get {
+                return ResourceManager.GetString("openFileDialogAllFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to json文件 (*.json)|*.json|所有文件 (*.*)|*.*.
         /// </summary>
-        internal static string openFileDialogFilter {
+        internal static string openFileDialogJsonFilter {
             get {
-                return ResourceManager.GetString("openFileDialogFilter", resourceCulture);
+                return ResourceManager.GetString("openFileDialogJsonFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to catchdata.
+        /// </summary>
+        internal static string tabCatchDataText {
+            get {
+                return ResourceManager.GetString("tabCatchDataText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 文本.
+        /// </summary>
+        internal static string tabTextText {
+            get {
+                return ResourceManager.GetString("tabTextText", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to 少女前线Json处理工具.
         /// </summary>
-        internal static string ToolFormText {
+        internal static string toolFormText {
             get {
-                return ResourceManager.GetString("ToolFormText", resourceCulture);
+                return ResourceManager.GetString("toolFormText", resourceCulture);
             }
         }
     }

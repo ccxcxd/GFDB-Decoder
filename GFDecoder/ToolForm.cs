@@ -21,13 +21,18 @@ namespace GFDecoder
         private void ToolForm_Load(object sender, EventArgs e)
         {
             #region String Resource Assignement
-            this.Text = Properties.Resources.ToolFormText;
+            this.Text = Properties.Resources.toolFormText;
             lblJson.Text = Properties.Resources.lblJsonText;
             lblSplit.Text = Properties.Resources.lblSplitText;
             lblProcess.Text = Properties.Resources.lblProcessText;
             btnJson.Text = Properties.Resources.btnJsonText;
             btnGo.Text = Properties.Resources.btnGoText;
             chkSplit.Text = Properties.Resources.chkSplitText;
+            tabCatchData.Text = Properties.Resources.tabCatchDataText;
+            tabText.Text = Properties.Resources.tabTextText;
+            lblTextFile.Text = Properties.Resources.tabTextText;
+            btnTextFile.Text =Properties.Resources.btnJsonText;
+            btnGoText.Text = Properties.Resources.btnGoText;
             #endregion
 
             UpdateFromSettings();
@@ -40,6 +45,7 @@ namespace GFDecoder
             txtProcess.Text = Properties.Settings.Default.processPath;
             chkSplit.Checked = Properties.Settings.Default.doSplit;
             chkSplit_CheckedChanged(null,null);
+            txtTextFile.Text = Properties.Settings.Default.textFilePath;
         }
 
         private void SaveToSettings()
@@ -48,6 +54,7 @@ namespace GFDecoder
             Properties.Settings.Default.splitPath = txtSplit.Text;
             Properties.Settings.Default.processPath = txtProcess.Text;
             Properties.Settings.Default.doSplit = chkSplit.Checked;
+            Properties.Settings.Default.textFilePath = txtTextFile.Text;
             Properties.Settings.Default.Save();
         }
 
@@ -94,11 +101,11 @@ namespace GFDecoder
 
         private void btnJson_Click(object sender, EventArgs e)
         {
-            string jsonpath = txtJson.Text;
-            if (File.Exists(jsonpath))
-                openFileDialog.InitialDirectory = Path.GetDirectoryName(jsonpath);
+            string filepath = txtJson.Text;
+            if (File.Exists(filepath))
+                openFileDialog.InitialDirectory = Path.GetDirectoryName(filepath);
 
-            openFileDialog.Filter = Properties.Resources.openFileDialogFilter;
+            openFileDialog.Filter = Properties.Resources.openFileDialogJsonFilter;
             openFileDialog.RestoreDirectory = true;
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
@@ -110,6 +117,31 @@ namespace GFDecoder
         private void ToolForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             SaveToSettings();
+        }
+
+        private void btnTextFile_Click(object sender, EventArgs e)
+        {
+            string filepath = txtTextFile.Text;
+            if (File.Exists(filepath))
+                openFileDialog.InitialDirectory = Path.GetDirectoryName(filepath);
+
+            openFileDialog.Filter = Properties.Resources.openFileDialogAllFilter;
+            openFileDialog.RestoreDirectory = true;
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                txtTextFile.Text = openFileDialog.FileName;
+            }
+        }
+
+        private void btnGoText_Click(object sender, EventArgs e)
+        {
+            string filepath = txtTextFile.Text;
+            if (rdbJson2Csv.Checked)
+            {
+                string outputpath = Path.Combine(Path.GetDirectoryName(filepath), Path.GetFileNameWithoutExtension(filepath) + ".csv");
+                GFDecoder.Json2Csv(filepath, outputpath);
+            }
         }
     }
 }
