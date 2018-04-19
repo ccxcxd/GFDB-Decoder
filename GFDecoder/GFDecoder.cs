@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -133,6 +134,34 @@ namespace GFDecoder
         public static int CalculateDifficulty(int maxlife, int dodge, int pow, int hit, int rate, int crit)
         {
             return 1;
+        }
+
+        public static void Json2Csv(string inputpath, string outputpath)
+        {
+            string jsonData = File.ReadAllText(inputpath);
+
+            var tmp = JsonConvert.DeserializeObject<Dictionary<string, List<Dictionary<string, string>>>>(jsonData);
+            string name = tmp.Keys.First();
+            var a = tmp[name];
+
+            StringBuilder sb = new StringBuilder();
+            // title line
+            var line = string.Join(",", a.First().Keys.ToArray());
+            sb.AppendLine(line);
+            foreach (var entry in a)
+            {
+                line = string.Join(",", entry.Select(x => {
+                    // quote lines with comma
+                    if (x.Value.Contains(","))
+                        return "\"" + x.Value + "\"";
+                    else
+                        return x.Value;
+                }));
+                sb.AppendLine(line);
+            }
+
+            File.WriteAllText(outputpath, sb.ToString());
+
         }
 
     }
