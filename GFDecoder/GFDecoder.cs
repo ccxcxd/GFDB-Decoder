@@ -102,6 +102,73 @@ namespace GFDecoder
             var enemyCharInfo = LoadSingleJsonData<enemy_character_type_info>(jsons, "id");
             var allyTeamInfo = LoadSingleJsonData<ally_team_info>(jsons, "id");
 
+            var eventCampaignInfo = LoadSingleJsonDataFromFolder<event_campaign_info>("supplemental", "id");
+            var campaignInfo = new Dictionary<int, campaign_info>();
+
+            var eventCampaignLookup = new Dictionary<int, Tuple<int, string, int>>(); // campaign_id: (id, name, chapter)
+            foreach (var eventCam in eventCampaignInfo.Values)
+                for (int i = 0; i < eventCam.campaign.Length; i++)
+                    eventCampaignLookup[eventCam.campaign[i]] = new Tuple<int, string, int>(eventCam.id, eventCam.name, i + 1);
+
+            foreach (var mission in missionInfo.Values)
+            {
+                if (mission.duplicate_type == 0)
+                {
+                    if (mission.campaign >= 0)
+                    {
+                        // main
+                        string suffix;
+                        switch (mission.if_emergency)
+                        {
+                            case 0:
+                                suffix = "";
+                                break;
+                            case 1:
+                                suffix = "E";
+                                break;
+                            case 3:
+                                suffix = "N";
+                                break;
+                            default:
+                                suffix = "";
+                                break;
+                        }
+                        mission.index_text = String.Format("{0}-{1}{2}", mission.campaign, mission.sub, suffix);
+
+                        int campaign_id = mission.campaign;
+                        string campaign_name = "campaign.main" + mission.campaign;
+                        if (!campaignInfo.ContainsKey(campaign_id))
+                            campaignInfo[campaign_id] = new campaign_info(campaign_id, 0, campaign_name);
+                        campaignInfo[campaign_id].mission_ids.Add(mission.id);
+                    }
+                    else
+                    {
+                        // event
+                        var t = eventCampaignLookup[mission.campaign];
+                        int campaign_id = 100 + t.Item1;
+                        string campaign_name = t.Item2;
+                        int chapter = t.Item3;
+                        mission.index_text = String.Format("{0}-{1}", chapter, mission.sub);
+
+                        if (!campaignInfo.ContainsKey(campaign_id))
+                            campaignInfo[campaign_id] = new campaign_info(campaign_id, 1, campaign_name);
+                        campaignInfo[campaign_id].mission_ids.Add(mission.id);
+
+                    }
+                }
+                else if (mission.duplicate_type > 0)
+                {
+                    // simulation
+                    mission.index_text = "";
+
+                    int campaign_id = 200 + mission.campaign;
+                    string campaign_name = "campaign.simulation" + mission.campaign;
+                    if (!campaignInfo.ContainsKey(campaign_id))
+                        campaignInfo[campaign_id] = new campaign_info(campaign_id, 2, campaign_name);
+                    campaignInfo[campaign_id].mission_ids.Add(mission.id);
+                }
+            }
+
             foreach (var member in enemyInTeamInfo.Values)
             {
                 if (!enemyCharInfo.ContainsKey(member.enemy_character_type_id))
@@ -124,6 +191,7 @@ namespace GFDecoder
             SaveSingleJsonDataToFolder(outputpath, enemyInTeamInfo);
             SaveSingleJsonDataToFolder(outputpath, enemyCharInfo);
             SaveSingleJsonDataToFolder(outputpath, allyTeamInfo);
+            SaveSingleJsonDataToFolder(outputpath, campaignInfo);
         }
 
         public static int CalculateDifficulty(enemy_character_type_info enemy)

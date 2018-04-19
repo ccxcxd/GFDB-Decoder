@@ -1,0 +1,9 @@
+{"event_campaign_info":[
+{"id": 1, "name": "campaign.cube", "campaign": [-1]},
+{"id": 2, "name": "campaign.arctic", "campaign": [-2, -3, -4, -5]},
+{"id": 3, "name": "campaign.cubeplus", "campaign": [-6, -7]},
+{"id": 4, "name": "campaign.rabit", "campaign": [-8]},
+{"id": 5, "name": "campaign.deepdive", "campaign": [-10,-11,-12,-13]},
+{"id": 6, "name": "campaign.dufashi", "campaign": [-14,-15]},
+{"id": 7, "name": "campaign.singularity", "campaign": [-16,-17,-18]}
+]}

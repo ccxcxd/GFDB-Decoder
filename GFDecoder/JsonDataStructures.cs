@@ -138,7 +138,49 @@ namespace GFDecoder
         public int difficulty;
         public int exp_parameter;
         public int type;
-        // imcomplete list
+        public int enemy_ai_type;
+        public int special_spot_id;
+        public int turn_duration;
+        public int boss_team_id;
+        public int ally_boss_team_id;
+        public int coin_type;
+        public int costbp;
+        public int expect_enemy_die_num;
+        public int expect_gun_die_num;
+        public int expect_turn;
+        public int coin_ap;
+        public int special_type;
+        public int turn_limit;
+        public string limit_gun_pool;
+        public string limit_equip_pool;
+        public int limit_team;
+        public string map_res_name;
+        public string map_information;
+        public int is_hide;
+        public int is_snow;
+        public string adaptive_gun;
+        public string fog_length;
+        public string fog_color;
+        public int support_available;
+        public int enemy_quickmove;
+        public int expect_defend_line_turn;
+        public string expect_hostage_num;
+        public string title_logo;
+        public string random_line_spot;
+        public int order;
+        public int reinforce_ally_team;
+        public int reinforce_ally_turn;
+        public int reinforce_ally_spot;
+        public string ally_code;
+        public string supply_parameter;
+        public string close_missions;
+        public int mission_group_id;
+        public string mission_group_draw_event;
+        public string drop_mission_key;
+        public string open_mission_keys;
+        public string mission_describe;
+
+        public string index_text = "X-X";
     }
 
     public class spot_info
@@ -182,6 +224,29 @@ namespace GFDecoder
         public string transform_number;
         public string transform_result;
         public string icon;
+    }
+
+    /** Custom Supplymental Data **/
+    public class event_campaign_info
+    {
+        public int id;
+        public string name;
+        public int[] campaign;
+    }
+
+    public class campaign_info
+    {
+        public int id;
+        public int type; // 0=main, 1=event, 2=simulation
+        public string name;
+        public List<int> mission_ids = new List<int>();
+
+        public campaign_info(int id, int type, string name)
+        {
+            this.id = id;
+            this.type = type;
+            this.name = name;
+        }
     }
 
 }
