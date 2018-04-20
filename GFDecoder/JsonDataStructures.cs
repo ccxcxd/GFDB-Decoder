@@ -181,6 +181,8 @@ namespace GFDecoder
         public string mission_describe;
 
         public string index_text = "X-X";
+        public List<int> spot_ids = new List<int>();
+        public Dictionary<int, int> enemy_team_count = new Dictionary<int, int>();
     }
 
     public class spot_info

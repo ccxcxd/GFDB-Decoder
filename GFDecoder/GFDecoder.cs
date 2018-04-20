@@ -169,6 +169,27 @@ namespace GFDecoder
                 }
             }
 
+            foreach (var spot in spotInfo.Values)
+            {
+                if (spot.mission_id <= 0)
+                    continue;
+
+                var mission = missionInfo[spot.mission_id];
+                mission.spot_ids.Add(spot.id);
+
+                int enemy_team_id;
+                if (spot.enemy_team_id != 0)
+                    enemy_team_id = spot.enemy_team_id;
+                else if (spot.ally_team_id != 0)
+                    enemy_team_id = allyTeamInfo[spot.ally_team_id].enemy_team_id;
+                else
+                    continue;
+
+                if (!mission.enemy_team_count.ContainsKey(enemy_team_id))
+                    mission.enemy_team_count[enemy_team_id] = 0;
+                mission.enemy_team_count[enemy_team_id]++;
+            }
+
             foreach (var member in enemyInTeamInfo.Values)
             {
                 if (!enemyCharInfo.ContainsKey(member.enemy_character_type_id))
@@ -190,7 +211,6 @@ namespace GFDecoder
             SaveSingleJsonDataToFolder(outputpath, enemyTeamInfo);
             SaveSingleJsonDataToFolder(outputpath, enemyInTeamInfo);
             SaveSingleJsonDataToFolder(outputpath, enemyCharInfo);
-            SaveSingleJsonDataToFolder(outputpath, allyTeamInfo);
             SaveSingleJsonDataToFolder(outputpath, campaignInfo);
         }
 
