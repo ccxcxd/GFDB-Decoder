@@ -88,7 +88,7 @@ namespace GFDecoder
             result.type = this.type;
             result.name = this.name;
             result.code = this.code;
-            result.maxlife = (int)Math.Ceiling(Math.Round(lv_to.maxlife / lv_from.maxlife * this.maxlife * number) / number);
+            result.maxlife = (int)Math.Round(lv_to.maxlife / lv_from.maxlife * this.maxlife * number);
             //result.maxlife = (int) Math.Round(lvX.maxlife / lv100.maxlife * this.maxlife);
             result.pow = (int)Math.Round(lv_to.pow / lv_from.pow * this.pow);
             result.hit = (int)Math.Round(lv_to.hit / lv_from.hit * this.hit);
@@ -226,6 +226,14 @@ namespace GFDecoder
         public string transform_number;
         public string transform_result;
         public string icon;
+    }
+
+    public class game_config_info
+    {
+        public string parameter_name;
+        public string parameter_type;
+        public string parameter_value;
+        public int client_require;
     }
 
     /** Custom Supplymental Data **/

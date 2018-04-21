@@ -52,32 +52,32 @@ namespace GFDecoder
             SaveSplitedJsonFiles(jsons, outFolder);
         }
 
-        public static Dictionary<int, T> LoadSingleJsonData<T>(string jsonData, string keyName)
+        public static Dictionary<S, T> LoadSingleJsonData<T, S>(string jsonData, string keyName)
         {
             string classname = typeof(T).Name;
             var a = JsonConvert.DeserializeObject<Dictionary<string, List<T>>>(jsonData);
 
-            var result = new Dictionary<int, T>();
+            var result = new Dictionary<S, T>();
             var keyField = typeof(T).GetField(keyName);
             foreach (T item in a[classname])
             {
-                result.Add((int)keyField.GetValue(item), item);
+                result.Add((S)keyField.GetValue(item), item);
             }
             return result;
         }
 
-        public static Dictionary<int, T> LoadSingleJsonData<T>(Dictionary<string, string> jsons, string keyName)
+        public static Dictionary<S, T> LoadSingleJsonData<T, S>(Dictionary<string, string> jsons, string keyName)
         {
             string classname = typeof(T).Name;
             string jsonData = jsons[classname];
-            return LoadSingleJsonData<T>(jsonData, keyName);
+            return LoadSingleJsonData<T, S>(jsonData, keyName);
         }
 
-        public static Dictionary<int, T> LoadSingleJsonDataFromFolder<T>(string jsonFolder, string keyName)
+        public static Dictionary<S, T> LoadSingleJsonDataFromFolder<T, S>(string jsonFolder, string keyName)
         {
             string classname = typeof(T).Name;
             string text = File.ReadAllText(Path.Combine(jsonFolder, classname + ".json"));
-            return LoadSingleJsonData<T>(text, keyName);
+            return LoadSingleJsonData<T, S>(text, keyName);
         }
 
         public static string SaveSingleJsonData<T>(Dictionary<int, T> data)
@@ -94,15 +94,16 @@ namespace GFDecoder
 
         public static void ProcessJsonData(Dictionary<string, string> jsons, string outputpath)
         {
-            var enemyAttrInfo = LoadSingleJsonData< enemy_standard_attribute_info>(jsons, "level");
-            var missionInfo = LoadSingleJsonData<mission_info>(jsons, "id");
-            var spotInfo = LoadSingleJsonData<spot_info>(jsons, "id");
-            var enemyTeamInfo = LoadSingleJsonData<enemy_team_info>(jsons, "id");
-            var enemyInTeamInfo = LoadSingleJsonData<enemy_in_team_info>(jsons, "id");
-            var enemyCharInfo = LoadSingleJsonData<enemy_character_type_info>(jsons, "id");
-            var allyTeamInfo = LoadSingleJsonData<ally_team_info>(jsons, "id");
+            var enemyAttrInfo = LoadSingleJsonData<enemy_standard_attribute_info, int>(jsons, "level");
+            var missionInfo = LoadSingleJsonData<mission_info, int>(jsons, "id");
+            var spotInfo = LoadSingleJsonData<spot_info, int>(jsons, "id");
+            var enemyTeamInfo = LoadSingleJsonData<enemy_team_info, int>(jsons, "id");
+            var enemyInTeamInfo = LoadSingleJsonData<enemy_in_team_info, int>(jsons, "id");
+            var enemyCharInfo = LoadSingleJsonData<enemy_character_type_info, int>(jsons, "id");
+            var allyTeamInfo = LoadSingleJsonData<ally_team_info, int>(jsons, "id");
+            var gameConfigInfo = LoadSingleJsonData<game_config_info, string>(jsons, "parameter_name");
 
-            var eventCampaignInfo = LoadSingleJsonDataFromFolder<event_campaign_info>("supplemental", "id");
+            var eventCampaignInfo = LoadSingleJsonDataFromFolder<event_campaign_info, int>("supplemental", "id");
             var campaignInfo = new Dictionary<int, campaign_info>();
 
             var eventCampaignLookup = new Dictionary<int, Tuple<int, string, int>>(); // campaign_id: (id, name, chapter)
@@ -196,7 +197,7 @@ namespace GFDecoder
                     continue;
 
                 member.enemy_character = enemyCharInfo[member.enemy_character_type_id].get_info_at_level(member.level, member.number, enemyAttrInfo);
-                member.difficulty = CalculateDifficulty(member.enemy_character);
+                member.difficulty = CalculateEnemyDifficulty(member.enemy_character, gameConfigInfo);
 
                 if (!enemyTeamInfo.ContainsKey(member.enemy_team_id))
                     continue;
@@ -214,14 +215,26 @@ namespace GFDecoder
             SaveSingleJsonDataToFolder(outputpath, campaignInfo);
         }
 
-        public static int CalculateDifficulty(enemy_character_type_info enemy)
+        public static int CalculateEnemyDifficulty(enemy_character_type_info enemy, Dictionary<string, game_config_info> game_config)
         {
-            return CalculateDifficulty(enemy.maxlife, enemy.dodge, enemy.pow, enemy.hit, enemy.rate, 0);
-        }
+            float[] eea  = BreakStringArray(game_config["enemy_effect_attack"].parameter_value, s => float.Parse(s));
+            float[] eed = BreakStringArray(game_config["enemy_effect_defence"].parameter_value, s => float.Parse(s));
+            if (eea.Length != 4 || eed.Length != 4)
+                return -1;
 
-        public static int CalculateDifficulty(int maxlife, int dodge, int pow, int hit, int rate, int crit)
+            // effect_attack = 22 * 扩编* (伤害* 射速 / 50 * 命中 / (命中 + 35) + 2)
+            int effect_attack = (int)Math.Ceiling(eea[0] * enemy.number * (enemy.pow * enemy.rate / eea[1] * enemy.hit / (enemy.hit + eea[2]) + eea[3]));
+            // effect_defence = 0.25 * (总血量* (35 + 回避) / 35 * 200 / (200 - 护甲) + 100)
+            int effect_defence = (int)Math.Ceiling(eed[0] * (enemy.maxlife * (eed[1] + enemy.dodge) / eed[1] * eed[2] / (eed[2] - enemy.armor) + eed[3]));
+            int effect = (int)Math.Ceiling(enemy.effect_ratio * (effect_attack + effect_defence));
+
+            return effect;
+    }
+
+        public static T[] BreakStringArray<T>(string str, Converter<string, T> converter, char seperator = ',')
         {
-            return 1;
+            string[] tokens = str.Split(seperator);
+            return Array.ConvertAll(tokens, converter); ;
         }
 
         public static void Json2Csv(string inputpath, string outputpath)
