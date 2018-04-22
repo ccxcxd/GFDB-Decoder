@@ -32,6 +32,7 @@ namespace GFDecoder
 
         public List<int> member_ids = new List<int>();
         public int difficulty = 0;
+        public int spot_id = 0;
     }
 
     public class enemy_in_team_info
@@ -257,6 +258,13 @@ namespace GFDecoder
             this.type = type;
             this.name = name;
         }
+    }
+
+    public class mission_extra_enemy_team_info
+    {
+        public int enemy_team_id_from;
+        public int enemy_team_id_to;
+        public int mission_id;
     }
 
 }

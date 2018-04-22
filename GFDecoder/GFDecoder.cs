@@ -104,6 +104,7 @@ namespace GFDecoder
             var gameConfigInfo = LoadSingleJsonData<game_config_info, string>(jsons, "parameter_name");
 
             var eventCampaignInfo = LoadSingleJsonDataFromFolder<event_campaign_info, int>("supplemental", "id");
+            var missionExtraTeamInfo = LoadSingleJsonDataFromFolder<mission_extra_enemy_team_info, int>("supplemental", "enemy_team_id_from");
             var campaignInfo = new Dictionary<int, campaign_info>();
 
             var eventCampaignLookup = new Dictionary<int, Tuple<int, string, int>>(); // campaign_id: (id, name, chapter)
@@ -189,6 +190,18 @@ namespace GFDecoder
                 if (!mission.enemy_team_count.ContainsKey(enemy_team_id))
                     mission.enemy_team_count[enemy_team_id] = 0;
                 mission.enemy_team_count[enemy_team_id]++;
+                enemyTeamInfo[enemy_team_id].spot_id = spot.id;
+            }
+
+            foreach (var info in missionExtraTeamInfo.Values)
+            {
+                var mission = missionInfo[info.mission_id];
+                for (int enemy_team_id = info.enemy_team_id_from; enemy_team_id <= info.enemy_team_id_to; enemy_team_id++)
+                {
+                    if (!mission.enemy_team_count.ContainsKey(enemy_team_id))
+                        mission.enemy_team_count[enemy_team_id] = 0;
+                    enemyTeamInfo[enemy_team_id].spot_id = -1;
+                }
             }
 
             foreach (var member in enemyInTeamInfo.Values)
@@ -204,6 +217,12 @@ namespace GFDecoder
 
                 enemyTeamInfo[member.enemy_team_id].member_ids.Add(member.id);
                 enemyTeamInfo[member.enemy_team_id].difficulty += member.difficulty;
+            }
+
+            foreach (var team in enemyTeamInfo.Values)
+            {
+                if (team.spot_id == 0)
+                    Console.Out.WriteLine("team not belong to spot: " + team.id);
             }
 
             Directory.CreateDirectory(outputpath);

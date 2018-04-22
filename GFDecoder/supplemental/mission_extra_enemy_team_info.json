@@ -1,0 +1,24 @@
+﻿{
+  "mission_extra_enemy_team_info": [
+    {
+      "enemy_team_id_from": 990,
+      "enemy_team_id_to": 1004,
+      "mission_id": 10017
+    },
+    {
+      "enemy_team_id_from": 1110,
+      "enemy_team_id_to": 1115,
+      "mission_id": 10017
+    },
+    {
+      "enemy_team_id_from": 1378,
+      "enemy_team_id_to": 1408,
+      "mission_id": 10036
+    },
+    {
+      "enemy_team_id_from": 1770,
+      "enemy_team_id_to": 1800,
+      "mission_id": 10091
+    }
+  ]
+}
