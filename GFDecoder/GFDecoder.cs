@@ -280,7 +280,7 @@ namespace GFDecoder
             return Array.ConvertAll(tokens, converter); ;
         }
 
-        public static void ProcessImages(string jsonpath, string imageFodler, string outputFolder)
+        public static void ProcessImages(string jsonpath, string imageFodler, string outputFolder, int missionMin, int missionMax)
         {
             var missionInfo = JsonConvert.DeserializeObject<Dictionary<int, mission_info>>(File.ReadAllText(jsonpath));
 
@@ -288,17 +288,22 @@ namespace GFDecoder
 
             foreach (var mission in missionInfo.Values)
             {
+                if (mission.id < missionMin || mission.id > missionMax)
+                    continue;
+
                 var w_all = mission.map_all_width;
                 var h_all = mission.map_all_height;
                 var w_chop = mission.map_eff_width;
                 var h_chop = mission.map_eff_height;
                 var x_off = mission.map_offset_x;
                 var y_off = mission.map_offset_y;
+                var pixelFormat = PixelFormat.Format24bppRgb;
                 
                 string imageInPath = Path.Combine(imageFodler, mission.map_res_name + ".png");
                 Image originalImage = Image.FromFile(imageInPath);
+                
 
-                Bitmap scaledImage = new Bitmap(w_all, h_all);
+                Bitmap scaledImage = new Bitmap(w_all, h_all, pixelFormat);
 
                 //scaledImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
 
@@ -329,39 +334,41 @@ namespace GFDecoder
                     h_chop = -h_chop;
                 }
 
-                Bitmap enlargedImage = new Bitmap(w_all * 3, h_all * 3);
-                using (Graphics g = Graphics.FromImage(enlargedImage))
-                {
-                    g.DrawImage(scaledImage, w_all, h_all);
-
-                    scaledImage.RotateFlip(RotateFlipType.RotateNoneFlipX);
-                    g.DrawImage(scaledImage, 0, h_all);
-                    g.DrawImage(scaledImage, w_all * 2, h_all);
-
-                    scaledImage.RotateFlip(RotateFlipType.RotateNoneFlipY);
-                    g.DrawImage(scaledImage, 0, 0);
-                    g.DrawImage(scaledImage, w_all * 2, 0);
-                    g.DrawImage(scaledImage, 0, h_all * 2);
-                    g.DrawImage(scaledImage, w_all * 2, h_all * 2);
-
-                    scaledImage.RotateFlip(RotateFlipType.RotateNoneFlipX);
-                    g.DrawImage(scaledImage, w_all, 0);
-                    g.DrawImage(scaledImage, w_all, h_all * 2);
-                }
-                scaledImage.Dispose();
-
                 Rectangle chopRect = ConvertMapCoorinates(x_off, y_off, w_chop, h_chop, w_all * 3, h_all * 3);
-                Bitmap choppedImage = new Bitmap(chopRect.Width, chopRect.Height);
+                Bitmap choppedImage = new Bitmap(chopRect.Width, chopRect.Height, pixelFormat);
 
                 using (Graphics g = Graphics.FromImage(choppedImage))
                 {
-                    g.DrawImage(enlargedImage, new Rectangle(0, 0, chopRect.Width, chopRect.Height), chopRect, GraphicsUnit.Pixel);
+                    chopImageHelper(g, chopRect, scaledImage, new Rectangle(0, 0, w_all, h_all), RotateFlipType.RotateNoneFlipXY);
+                    chopImageHelper(g, chopRect, scaledImage, new Rectangle(w_all, 0, w_all, h_all), RotateFlipType.RotateNoneFlipY);
+                    chopImageHelper(g, chopRect, scaledImage, new Rectangle(w_all*2, 0, w_all, h_all), RotateFlipType.RotateNoneFlipXY);
+                    chopImageHelper(g, chopRect, scaledImage, new Rectangle(0, h_all, w_all, h_all), RotateFlipType.RotateNoneFlipX);
+                    chopImageHelper(g, chopRect, scaledImage, new Rectangle(w_all, h_all, w_all, h_all), RotateFlipType.RotateNoneFlipNone);
+                    chopImageHelper(g, chopRect, scaledImage, new Rectangle(w_all*2, h_all, w_all, h_all), RotateFlipType.RotateNoneFlipX);
+                    chopImageHelper(g, chopRect, scaledImage, new Rectangle(0, h_all*2, w_all, h_all), RotateFlipType.RotateNoneFlipXY);
+                    chopImageHelper(g, chopRect, scaledImage, new Rectangle(w_all, h_all*2, w_all, h_all), RotateFlipType.RotateNoneFlipY);
+                    chopImageHelper(g, chopRect, scaledImage, new Rectangle(w_all*2, h_all*2, w_all, h_all), RotateFlipType.RotateNoneFlipXY);
                 }
-                enlargedImage.Dispose();
+                scaledImage.Dispose();
 
                 string imageOutPath = Path.Combine(outputFolder, string.Format("mission{0}.png", mission.id));
                 choppedImage.Save(imageOutPath);
                 choppedImage.Dispose();
+            }
+        }
+
+        private static void chopImageHelper(Graphics g, Rectangle chopRect, Bitmap orgImg, Rectangle regionRect, RotateFlipType rotateFlipType)
+        {
+            Rectangle intRect = Rectangle.Intersect(chopRect, regionRect);
+            if (!intRect.IsEmpty)
+            {
+                using (Bitmap tmpImg = orgImg.Clone(new Rectangle(0, 0, orgImg.Width, orgImg.Height), orgImg.PixelFormat))
+                {
+                    tmpImg.RotateFlip(rotateFlipType);
+                    Rectangle scrRect = new Rectangle(intRect.X % regionRect.Width, intRect.Y % regionRect.Height, intRect.Width, intRect.Height);
+                    Rectangle destRect = new Rectangle(intRect.X - chopRect.X, intRect.Y - chopRect.Y, intRect.Width, intRect.Height);
+                    g.DrawImage(tmpImg, destRect, scrRect, GraphicsUnit.Pixel);
+                }
             }
         }
 

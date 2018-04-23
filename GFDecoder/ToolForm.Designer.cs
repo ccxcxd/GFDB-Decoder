@@ -57,6 +57,9 @@
             this.txtImageJson = new System.Windows.Forms.TextBox();
             this.lblImageJson = new System.Windows.Forms.Label();
             this.rdbProcessedJson2Csv = new System.Windows.Forms.RadioButton();
+            this.txtImageFrom = new System.Windows.Forms.TextBox();
+            this.txtImageTo = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.tabControl.SuspendLayout();
             this.tabCatchData.SuspendLayout();
             this.tabText.SuspendLayout();
@@ -283,7 +286,10 @@
             // 
             // tabImage
             // 
+            this.tabImage.Controls.Add(this.label1);
+            this.tabImage.Controls.Add(this.txtImageTo);
             this.tabImage.Controls.Add(this.btnGoImage);
+            this.tabImage.Controls.Add(this.txtImageFrom);
             this.tabImage.Controls.Add(this.txtImage);
             this.tabImage.Controls.Add(this.lblImage);
             this.tabImage.Controls.Add(this.btnImage);
@@ -378,6 +384,34 @@
             this.rdbProcessedJson2Csv.Text = "processed json -> csv";
             this.rdbProcessedJson2Csv.UseVisualStyleBackColor = true;
             // 
+            // txtImageFrom
+            // 
+            this.txtImageFrom.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtImageFrom.Location = new System.Drawing.Point(146, 142);
+            this.txtImageFrom.Name = "txtImageFrom";
+            this.txtImageFrom.Size = new System.Drawing.Size(57, 26);
+            this.txtImageFrom.TabIndex = 22;
+            this.txtImageFrom.Text = "1";
+            // 
+            // txtImageTo
+            // 
+            this.txtImageTo.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtImageTo.Location = new System.Drawing.Point(234, 142);
+            this.txtImageTo.Name = "txtImageTo";
+            this.txtImageTo.Size = new System.Drawing.Size(57, 26);
+            this.txtImageTo.TabIndex = 27;
+            this.txtImageTo.Text = "99999";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(209, 145);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(18, 20);
+            this.label1.TabIndex = 28;
+            this.label1.Text = "~";
+            // 
             // ToolForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -431,5 +465,8 @@
         private System.Windows.Forms.TextBox txtImageJson;
         private System.Windows.Forms.Label lblImageJson;
         private System.Windows.Forms.RadioButton rdbProcessedJson2Csv;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox txtImageTo;
+        private System.Windows.Forms.TextBox txtImageFrom;
     }
 }

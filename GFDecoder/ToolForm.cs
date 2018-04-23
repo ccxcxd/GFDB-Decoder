@@ -149,14 +149,16 @@ namespace GFDecoder
 
         private void btnGoImage_Click(object sender, EventArgs e)
         {
-            string jsonpath = txtImageJson.Text;
-            string imagepath = txtImage.Text;
 
             SaveToSettings();
 
             //try
             //{
-                GFDecoder.ProcessImages(jsonpath, imagepath, imagepath);
+                string jsonpath = txtImageJson.Text;
+                string imagepath = txtImage.Text;
+                int from = int.Parse(txtImageFrom.Text);
+                int to = int.Parse(txtImageTo.Text);
+            GFDecoder.ProcessImages(jsonpath, imagepath, imagepath, from, to);
             //}
             //catch (Exception ex)
             //{
