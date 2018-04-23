@@ -2,6 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -146,15 +149,19 @@ namespace GFDecoder
                     else
                     {
                         // event
-                        var t = eventCampaignLookup[mission.campaign];
-                        int campaign_id = 100 + t.Item1;
-                        string campaign_name = t.Item2;
-                        int chapter = t.Item3;
-                        mission.index_text = String.Format("{0}-{1}", chapter, mission.sub);
+                        if (eventCampaignLookup.ContainsKey(mission.campaign))
+                        {
+                            // only process those listed
+                            var t = eventCampaignLookup[mission.campaign];
+                            int campaign_id = 100 + t.Item1;
+                            string campaign_name = t.Item2;
+                            int chapter = t.Item3;
+                            mission.index_text = String.Format("{0}-{1}", chapter, mission.sub);
 
-                        if (!campaignInfo.ContainsKey(campaign_id))
-                            campaignInfo[campaign_id] = new campaign_info(campaign_id, 1, campaign_name);
-                        campaignInfo[campaign_id].mission_ids.Add(mission.id);
+                            if (!campaignInfo.ContainsKey(campaign_id))
+                                campaignInfo[campaign_id] = new campaign_info(campaign_id, 1, campaign_name);
+                            campaignInfo[campaign_id].mission_ids.Add(mission.id);
+                        }
 
                     }
                 }
@@ -169,6 +176,17 @@ namespace GFDecoder
                         campaignInfo[campaign_id] = new campaign_info(campaign_id, 2, campaign_name);
                     campaignInfo[campaign_id].mission_ids.Add(mission.id);
                 }
+
+                string[] mapinfo = mission.map_information.Split('|');
+                int[] mapOverallSize = BreakStringArray(mapinfo[0], s => int.Parse(s));
+                int[] mapChopSize = BreakStringArray(mapinfo[1], s => int.Parse(s));
+                int[] mapChopOffset = BreakStringArray(mapinfo[2], s => int.Parse(s));
+                mission.map_all_width = mapOverallSize[0];
+                mission.map_all_height = mapOverallSize[1];
+                mission.map_eff_width = mapChopSize[0];
+                mission.map_eff_height = mapChopSize[1];
+                mission.map_offset_x = mapChopOffset[0];
+                mission.map_offset_y = mapChopOffset[1];
             }
 
             foreach (var spot in spotInfo.Values)
@@ -185,12 +203,18 @@ namespace GFDecoder
                 else if (spot.ally_team_id != 0)
                     enemy_team_id = allyTeamInfo[spot.ally_team_id].enemy_team_id;
                 else
-                    continue;
+                    enemy_team_id = 0;
 
-                if (!mission.enemy_team_count.ContainsKey(enemy_team_id))
-                    mission.enemy_team_count[enemy_team_id] = 0;
-                mission.enemy_team_count[enemy_team_id]++;
-                enemyTeamInfo[enemy_team_id].spot_id = spot.id;
+                if (enemy_team_id != 0)
+                {
+                    if (!mission.enemy_team_count.ContainsKey(enemy_team_id))
+                        mission.enemy_team_count[enemy_team_id] = 0;
+                    mission.enemy_team_count[enemy_team_id]++;
+                    enemyTeamInfo[enemy_team_id].spot_id = spot.id;
+                }
+
+                spot.coordinator_x = Math.Abs(mission.map_eff_width) / 2 + (spot.coordinator_x - mission.map_offset_x);
+                spot.coordinator_y = Math.Abs(mission.map_eff_height) / 2  - (spot.coordinator_y - mission.map_offset_y);
             }
 
             foreach (var info in missionExtraTeamInfo.Values)
@@ -212,11 +236,11 @@ namespace GFDecoder
                 member.enemy_character = enemyCharInfo[member.enemy_character_type_id].get_info_at_level(member.level, member.number, enemyAttrInfo);
                 member.difficulty = CalculateEnemyDifficulty(member.enemy_character, gameConfigInfo);
 
-                if (!enemyTeamInfo.ContainsKey(member.enemy_team_id))
-                    continue;
-
-                enemyTeamInfo[member.enemy_team_id].member_ids.Add(member.id);
-                enemyTeamInfo[member.enemy_team_id].difficulty += member.difficulty;
+                if (enemyTeamInfo.ContainsKey(member.enemy_team_id))
+                {
+                    enemyTeamInfo[member.enemy_team_id].member_ids.Add(member.id);
+                    enemyTeamInfo[member.enemy_team_id].difficulty += member.difficulty;
+                }
             }
 
             foreach (var team in enemyTeamInfo.Values)
@@ -248,7 +272,7 @@ namespace GFDecoder
             int effect = (int)Math.Ceiling(enemy.effect_ratio * (effect_attack + effect_defence));
 
             return effect;
-    }
+        }
 
         public static T[] BreakStringArray<T>(string str, Converter<string, T> converter, char seperator = ',')
         {
@@ -256,19 +280,125 @@ namespace GFDecoder
             return Array.ConvertAll(tokens, converter); ;
         }
 
+        public static void ProcessImages(string jsonpath, string imageFodler, string outputFolder)
+        {
+            var missionInfo = JsonConvert.DeserializeObject<Dictionary<int, mission_info>>(File.ReadAllText(jsonpath));
+
+            Directory.CreateDirectory(outputFolder);
+
+            foreach (var mission in missionInfo.Values)
+            {
+                var w_all = mission.map_all_width;
+                var h_all = mission.map_all_height;
+                var w_chop = mission.map_eff_width;
+                var h_chop = mission.map_eff_height;
+                var x_off = mission.map_offset_x;
+                var y_off = mission.map_offset_y;
+                
+                string imageInPath = Path.Combine(imageFodler, mission.map_res_name + ".png");
+                Image originalImage = Image.FromFile(imageInPath);
+
+                Bitmap scaledImage = new Bitmap(w_all, h_all);
+
+                //scaledImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+                using (Graphics g = Graphics.FromImage(scaledImage))
+                {
+                    g.CompositingMode = CompositingMode.SourceCopy;
+                    g.CompositingQuality = CompositingQuality.HighQuality;
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    g.SmoothingMode = SmoothingMode.HighQuality;
+                    g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                    using (var wrapMode = new ImageAttributes())
+                    {
+                        wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                        g.DrawImage(originalImage, new Rectangle(0, 0, w_all, h_all), 0, 0, originalImage.Width, originalImage.Height, GraphicsUnit.Pixel, wrapMode);
+                    }
+                }
+                originalImage.Dispose();
+
+                if (w_chop < 0)
+                {
+                    scaledImage.RotateFlip(RotateFlipType.RotateNoneFlipY);
+                    w_chop = -w_chop;
+                }
+                if (h_chop < 0)
+                {
+                    scaledImage.RotateFlip(RotateFlipType.RotateNoneFlipX);
+                    h_chop = -h_chop;
+                }
+
+                Bitmap enlargedImage = new Bitmap(w_all * 3, h_all * 3);
+                using (Graphics g = Graphics.FromImage(enlargedImage))
+                {
+                    g.DrawImage(scaledImage, w_all, h_all);
+
+                    scaledImage.RotateFlip(RotateFlipType.RotateNoneFlipX);
+                    g.DrawImage(scaledImage, 0, h_all);
+                    g.DrawImage(scaledImage, w_all * 2, h_all);
+
+                    scaledImage.RotateFlip(RotateFlipType.RotateNoneFlipY);
+                    g.DrawImage(scaledImage, 0, 0);
+                    g.DrawImage(scaledImage, w_all * 2, 0);
+                    g.DrawImage(scaledImage, 0, h_all * 2);
+                    g.DrawImage(scaledImage, w_all * 2, h_all * 2);
+
+                    scaledImage.RotateFlip(RotateFlipType.RotateNoneFlipX);
+                    g.DrawImage(scaledImage, w_all, 0);
+                    g.DrawImage(scaledImage, w_all, h_all * 2);
+                }
+                scaledImage.Dispose();
+
+                Rectangle chopRect = ConvertMapCoorinates(x_off, y_off, w_chop, h_chop, w_all * 3, h_all * 3);
+                Bitmap choppedImage = new Bitmap(chopRect.Width, chopRect.Height);
+
+                using (Graphics g = Graphics.FromImage(choppedImage))
+                {
+                    g.DrawImage(enlargedImage, new Rectangle(0, 0, chopRect.Width, chopRect.Height), chopRect, GraphicsUnit.Pixel);
+                }
+                enlargedImage.Dispose();
+
+                string imageOutPath = Path.Combine(outputFolder, string.Format("mission{0}.png", mission.id));
+                choppedImage.Save(imageOutPath);
+                choppedImage.Dispose();
+            }
+        }
+
+        public static Rectangle ConvertMapCoorinates(int game_x, int game_y, int width, int height, int mapWidth, int mapHeight)
+        {
+            int center_x = mapWidth / 2 + game_x;
+            int center_y = mapHeight / 2 - game_y;
+            int x = center_x - width / 2;
+            int y = center_y - height/ 2;
+            return new Rectangle(x, y, width, height);
+        }
+
         public static void Json2Csv(string inputpath, string outputpath)
         {
             string jsonData = File.ReadAllText(inputpath);
-
             var tmp = JsonConvert.DeserializeObject<Dictionary<string, List<Dictionary<string, string>>>>(jsonData);
             string name = tmp.Keys.First();
-            var a = tmp[name];
+            var json = tmp[name];
+            Json2Csv(json, outputpath);
+        }
 
+        public static void ProcessedJson2Csv(string inputpath, string outputpath)
+        {
+            throw new NotImplementedException();
+            string jsonData = File.ReadAllText(inputpath);
+            var tmp = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(jsonData);
+            var json = tmp.Values.ToList();
+            Json2Csv(json, outputpath);
+        }
+
+        public static void Json2Csv(List<Dictionary<string, string>> json, string outputpath)
+        {
             StringBuilder sb = new StringBuilder();
             // title line
-            var line = string.Join(",", a.First().Keys.ToArray());
+            var line = string.Join(",", json.First().Keys.ToArray());
             sb.AppendLine(line);
-            foreach (var entry in a)
+            foreach (var entry in json)
             {
                 line = string.Join(",", entry.Select(x => {
                     // quote lines with comma

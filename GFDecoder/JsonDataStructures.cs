@@ -184,6 +184,12 @@ namespace GFDecoder
         public string index_text = "X-X";
         public List<int> spot_ids = new List<int>();
         public Dictionary<int, int> enemy_team_count = new Dictionary<int, int>();
+        public int map_all_width = 0;
+        public int map_all_height = 0;
+        public int map_eff_width = 0;
+        public int map_eff_height = 0;
+        public int map_offset_x = 0;
+        public int map_offset_y = 0;
     }
 
     public class spot_info

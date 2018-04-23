@@ -33,6 +33,12 @@ namespace GFDecoder
             lblTextFile.Text = Properties.Resources.tabTextText;
             btnTextFile.Text =Properties.Resources.btnJsonText;
             btnGoText.Text = Properties.Resources.btnGoText;
+            tabImage.Text = Properties.Resources.tabImageText;
+            lblJson.Text = Properties.Resources.lblJsonText;
+            lblImage.Text = Properties.Resources.lblImageText;
+            btnImageJson.Text = Properties.Resources.lblProcessText;
+            btnImage.Text = Properties.Resources.btnJsonText;
+            btnGoImage.Text = Properties.Resources.btnGoText;
             #endregion
 
             UpdateFromSettings();
@@ -46,6 +52,8 @@ namespace GFDecoder
             chkSplit.Checked = Properties.Settings.Default.doSplit;
             chkSplit_CheckedChanged(null,null);
             txtTextFile.Text = Properties.Settings.Default.textFilePath;
+            txtImage.Text = Properties.Settings.Default.ImagePath;
+            txtImageJson.Text = Properties.Settings.Default.ImageJsonPath;
         }
 
         private void SaveToSettings()
@@ -55,6 +63,8 @@ namespace GFDecoder
             Properties.Settings.Default.processPath = txtProcess.Text;
             Properties.Settings.Default.doSplit = chkSplit.Checked;
             Properties.Settings.Default.textFilePath = txtTextFile.Text;
+            Properties.Settings.Default.ImagePath = txtImage.Text;
+            Properties.Settings.Default.ImageJsonPath = txtImageJson.Text;
             Properties.Settings.Default.Save();
         }
 
@@ -80,7 +90,7 @@ namespace GFDecoder
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.ToString());
             }
         }
 
@@ -101,17 +111,7 @@ namespace GFDecoder
 
         private void btnJson_Click(object sender, EventArgs e)
         {
-            string filepath = txtJson.Text;
-            if (File.Exists(filepath))
-                openFileDialog.InitialDirectory = Path.GetDirectoryName(filepath);
-
-            openFileDialog.Filter = Properties.Resources.openFileDialogJsonFilter;
-            openFileDialog.RestoreDirectory = true;
-
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                txtJson.Text = openFileDialog.FileName;
-            }
+            DoOpenFileDialog(txtJson, Properties.Resources.openFileDialogJsonFilter);
         }
 
         private void ToolForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -121,27 +121,72 @@ namespace GFDecoder
 
         private void btnTextFile_Click(object sender, EventArgs e)
         {
-            string filepath = txtTextFile.Text;
-            if (File.Exists(filepath))
-                openFileDialog.InitialDirectory = Path.GetDirectoryName(filepath);
-
-            openFileDialog.Filter = Properties.Resources.openFileDialogAllFilter;
-            openFileDialog.RestoreDirectory = true;
-
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                txtTextFile.Text = openFileDialog.FileName;
-            }
+            DoOpenFileDialog(txtTextFile, Properties.Resources.openFileDialogAllFilter);
         }
 
         private void btnGoText_Click(object sender, EventArgs e)
         {
             string filepath = txtTextFile.Text;
+
+            SaveToSettings();
+
             if (rdbJson2Csv.Checked)
             {
                 string outputpath = Path.Combine(Path.GetDirectoryName(filepath), Path.GetFileNameWithoutExtension(filepath) + ".csv");
                 GFDecoder.Json2Csv(filepath, outputpath);
             }
+            else if (rdbProcessedJson2Csv.Checked)
+            {
+                string outputpath = Path.Combine(Path.GetDirectoryName(filepath), Path.GetFileNameWithoutExtension(filepath) + ".csv");
+                GFDecoder.ProcessedJson2Csv(filepath, outputpath);
+            }
+        }
+
+        private void btnImage_Click(object sender, EventArgs e)
+        {
+            DoOpenFileDialog(txtImage, Properties.Resources.openFileDialogAllFilter);
+        }
+
+        private void btnGoImage_Click(object sender, EventArgs e)
+        {
+            string jsonpath = txtImageJson.Text;
+            string imagepath = txtImage.Text;
+
+            SaveToSettings();
+
+            //try
+            //{
+                GFDecoder.ProcessImages(jsonpath, imagepath, imagepath);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex);
+            //}
+        }
+
+        private void btnImageJson_Click(object sender, EventArgs e)
+        {
+            DoOpenFileDialog(txtImageJson, Properties.Resources.openFileDialogJsonFilter);
+        }
+
+        private void DoOpenFileDialog(TextBox txtbox, string filter)
+        {
+            string filepath = txtbox.Text;
+            if (File.Exists(filepath))
+                openFileDialog.InitialDirectory = Path.GetDirectoryName(filepath);
+
+            openFileDialog.Filter = filter;
+            openFileDialog.RestoreDirectory = true;
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                txtbox.Text = openFileDialog.FileName;
+            }
+        }
+
+        private void txtProcess_TextChanged(object sender, EventArgs e)
+        {
+            txtImageJson.Text = Path.Combine(txtProcess.Text, typeof(mission_info).Name + ",json");
         }
     }
 }

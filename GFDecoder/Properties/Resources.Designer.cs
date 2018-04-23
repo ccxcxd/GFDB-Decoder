@@ -88,6 +88,15 @@ namespace GFDecoder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 图片.
+        /// </summary>
+        internal static string lblImageText {
+            get {
+                return ResourceManager.GetString("lblImageText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 源Json.
         /// </summary>
         internal static string lblJsonText {
@@ -147,6 +156,15 @@ namespace GFDecoder.Properties {
         internal static string tabCatchDataText {
             get {
                 return ResourceManager.GetString("tabCatchDataText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 图片.
+        /// </summary>
+        internal static string tabImageText {
+            get {
+                return ResourceManager.GetString("tabImageText", resourceCulture);
             }
         }
         

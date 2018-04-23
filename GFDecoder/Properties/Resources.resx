@@ -153,4 +153,10 @@
   <data name="tabTextText" xml:space="preserve">
     <value>文本</value>
   </data>
+  <data name="lblImageText" xml:space="preserve">
+    <value>图片</value>
+  </data>
+  <data name="tabImageText" xml:space="preserve">
+    <value>图片</value>
+  </data>
 </root>
