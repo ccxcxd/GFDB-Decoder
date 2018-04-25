@@ -145,6 +145,11 @@ namespace GFDecoder
                 string outputpath = Path.Combine(Path.GetDirectoryName(filepath), Path.GetFileNameWithoutExtension(filepath) + ".csv");
                 GFDecoder.ProcessedJson2Csv(filepath, outputpath);
             }
+            else if (rdbAvgtext2Js.Checked)
+            {
+                string outputpath = Path.Combine(Path.GetDirectoryName(filepath), Path.GetFileNameWithoutExtension(filepath) + ".json");
+                GFDecoder.Avgtext2Js(filepath, outputpath);
+            }
         }
 
         private void btnImage_Click(object sender, EventArgs e)

@@ -33,6 +33,7 @@ namespace GFDecoder
         public List<int> member_ids = new List<int>();
         public int difficulty = 0;
         public int spot_id = 0;
+        public List<string> drops = new List<string>();
     }
 
     public class enemy_in_team_info
@@ -240,6 +241,22 @@ namespace GFDecoder
         public string parameter_type;
         public string parameter_value;
         public int client_require;
+    }
+
+    public class gun_info
+    {
+        public int id;
+        public string name;
+        public string en_name;
+        public string introduce;
+        public string en_introduce;
+        public string code;
+    }
+
+    public class equip_info
+    {
+        public int id;
+        public string name;
     }
 
     /** Custom Supplymental Data **/

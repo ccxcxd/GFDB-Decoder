@@ -105,6 +105,8 @@ namespace GFDecoder
             var enemyCharInfo = LoadSingleJsonData<enemy_character_type_info, int>(jsons, "id");
             var allyTeamInfo = LoadSingleJsonData<ally_team_info, int>(jsons, "id");
             var gameConfigInfo = LoadSingleJsonData<game_config_info, string>(jsons, "parameter_name");
+            var gunInfo = LoadSingleJsonData<gun_info, int>(jsons, "id");
+            var equipInfo = LoadSingleJsonData<equip_info, int>(jsons, "id");
 
             var eventCampaignInfo = LoadSingleJsonDataFromFolder<event_campaign_info, int>("supplemental", "id");
             var missionExtraTeamInfo = LoadSingleJsonDataFromFolder<mission_extra_enemy_team_info, int>("supplemental", "enemy_team_id_from");
@@ -245,6 +247,29 @@ namespace GFDecoder
 
             foreach (var team in enemyTeamInfo.Values)
             {
+                if (team.limit_guns != "")
+                {
+                    int[] ids = BreakStringArray(team.limit_guns, s => int.Parse(s));
+                    foreach (var id in ids)
+                    {
+                        if (gunInfo.ContainsKey(id))
+                            team.drops.Add(gunInfo[id].name);
+                        else
+                            team.drops.Add("gun_id=" + id);
+                    }
+                }
+                if (team.limit_equips != "")
+                {
+                    int[] ids = BreakStringArray(team.limit_equips, s => int.Parse(s));
+                    foreach (var id in ids)
+                    {
+                        if (equipInfo.ContainsKey(id))
+                            team.drops.Add(equipInfo[id].name);
+                        else
+                            team.drops.Add("equip_id=" + id);
+                    }
+                }
+
                 if (team.spot_id == 0)
                     Console.Out.WriteLine("team not belong to spot: " + team.id);
             }
@@ -419,6 +444,21 @@ namespace GFDecoder
 
             File.WriteAllText(outputpath, sb.ToString());
 
+        }
+
+        public static void Avgtext2Js(string inputpath, string outputpath)
+        {
+            var avglines = File.ReadAllLines(inputpath);
+            using (var writer = new StreamWriter(outputpath))
+            {
+                foreach (var line in avglines)
+                {
+                    string[] items = line.Split(',');
+                    if (items.Length != 2)
+                        continue;
+                    writer.WriteLine("\t\"{0}\": \"{1}\",", items[0], items[1]);
+                }
+            }
         }
 
         public static int UERound(double f)
