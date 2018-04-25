@@ -266,10 +266,10 @@ namespace GFDecoder
                 return -1;
 
             // effect_attack = 22 * 扩编* (伤害* 射速 / 50 * 命中 / (命中 + 35) + 2)
-            int effect_attack = (int)Math.Ceiling(eea[0] * enemy.number * (enemy.pow * enemy.rate / eea[1] * enemy.hit / (enemy.hit + eea[2]) + eea[3]));
+            int effect_attack = UECeiling(eea[0] * enemy.number * (enemy.pow * enemy.rate / eea[1] * enemy.hit / (enemy.hit + eea[2]) + eea[3]));
             // effect_defence = 0.25 * (总血量* (35 + 回避) / 35 * 200 / (200 - 护甲) + 100)
-            int effect_defence = (int)Math.Ceiling(eed[0] * (enemy.maxlife * (eed[1] + enemy.dodge) / eed[1] * eed[2] / (eed[2] - enemy.armor) + eed[3]));
-            int effect = (int)Math.Ceiling(enemy.effect_ratio * (effect_attack + effect_defence));
+            int effect_defence = UECeiling(eed[0] * (enemy.maxlife * (eed[1] + enemy.dodge) / eed[1] * eed[2] / (eed[2] - enemy.armor) + eed[3]));
+            int effect = UECeiling(enemy.effect_ratio * (effect_attack + effect_defence));
 
             return effect;
         }
@@ -421,5 +421,14 @@ namespace GFDecoder
 
         }
 
+        public static int UERound(double f)
+        {
+            return (int)Math.Round((float)f);
+        }
+
+        public static int UECeiling(double f)
+        {
+            return (int)Math.Ceiling((float)f);
+        }
     }
 }

@@ -10,13 +10,13 @@ namespace GFDecoder
     public class enemy_standard_attribute_info
     {
         public int level;
-        public float maxlife;
-        public float dodge;
-        public float pow;
-        public float hit;
-        public float armor_piercing;
-        public float armor;
-        public float shield;
+        public double maxlife;
+        public double dodge;
+        public double pow;
+        public double hit;
+        public double armor_piercing;
+        public double armor;
+        public double shield;
     }
 
     public class enemy_team_info
@@ -89,18 +89,17 @@ namespace GFDecoder
             result.type = this.type;
             result.name = this.name;
             result.code = this.code;
-            result.maxlife = (int)Math.Round(lv_to.maxlife / lv_from.maxlife * this.maxlife * number);
-            //result.maxlife = (int) Math.Round(lvX.maxlife / lv100.maxlife * this.maxlife);
-            result.pow = (int)Math.Round(lv_to.pow / lv_from.pow * this.pow);
-            result.hit = (int)Math.Round(lv_to.hit / lv_from.hit * this.hit);
-            result.dodge = (int)Math.Round(lv_to.dodge / lv_from.dodge * this.dodge);
+            result.maxlife = GFDecoder.UERound(this.maxlife * lv_to.maxlife / lv_from.maxlife * number);
+            result.pow = GFDecoder.UERound(this.pow * lv_to.pow / lv_from.pow);
+            result.hit = GFDecoder.UERound(this.hit * lv_to.hit / lv_from.hit);
+            result.dodge = GFDecoder.UERound(this.dodge * lv_to.dodge / lv_from.dodge);
             result.range = this.range;
             result.speed = this.speed;
             result.number = number;
             result.angle = this.angle;
-            result.armor_piercing = (int)Math.Round(lv_to.armor_piercing / lv_from.armor_piercing * this.armor_piercing);
-            result.armor = (int)Math.Round(lv_to.armor / lv_from.armor * this.armor);
-            result.shield = (int)Math.Round(lv_to.shield / lv_from.shield * this.shield);
+            result.armor_piercing = GFDecoder.UERound(this.armor_piercing * lv_to.armor_piercing / lv_from.armor_piercing);
+            result.armor = GFDecoder.UERound(this.armor * lv_to.armor / lv_from.armor);
+            result.shield = GFDecoder.UERound(this.shield * lv_to.shield / lv_from.shield);
             result.rate = this.rate;
             result.boss_hp = this.boss_hp;
             result.debuff_resistance = this.debuff_resistance;
