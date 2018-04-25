@@ -84,6 +84,11 @@ namespace GFDecoder
                 if (doSplit)
                 {
                     GFDecoder.SaveSplitedJsonFiles(jsons, splitpath);
+                    foreach (var f in Directory.GetFiles(splitpath, "*.json"))
+                    {
+                        string outputpath = Path.Combine(Path.GetDirectoryName(f), Path.GetFileNameWithoutExtension(f) + ".csv");
+                        GFDecoder.Json2Csv(f, outputpath);
+                    }
                 }
 
                 GFDecoder.ProcessJsonData(jsons, processpath);
