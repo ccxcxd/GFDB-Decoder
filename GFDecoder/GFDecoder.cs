@@ -221,10 +221,13 @@ namespace GFDecoder
 
                 foreach (var route_id in BreakStringArray(spot.route, s => int.Parse(s)))
                 {
+                    if (spot.route_types.ContainsKey(route_id))
+                        continue;
+
                     var other = spotInfo[route_id];
                     if (!other.route_types.ContainsKey(spot.id))
                     {
-                        var other_route_ids = BreakStringArray(other.route, s => int.Parse(s)).ToList(); ;
+                        var other_route_ids = BreakStringArray(other.route, s => int.Parse(s)).ToList();
                         if (other_route_ids.Contains(spot.id))
                             spot.route_types.Add(route_id, 2); // 2 way
                         else
@@ -464,16 +467,19 @@ namespace GFDecoder
         public static void Avgtext2Js(string inputpath, string outputpath)
         {
             var avglines = File.ReadAllLines(inputpath);
-            using (var writer = new StreamWriter(outputpath))
+            var avgDict = new Dictionary<string, string>();
+            foreach (var line in avglines)
             {
-                foreach (var line in avglines)
-                {
-                    string[] items = line.Split(',');
-                    if (items.Length != 2)
-                        continue;
-                    writer.WriteLine("\t\"{0}\": \"{1}\",", items[0], items[1]);
-                }
+                string[] items = line.Split(',');
+                if (items.Length != 2)
+                    continue;
+                avgDict.Add(items[0], items[1]);
             }
+            var json = JsonConvert.SerializeObject(avgDict, Formatting.Indented);
+            json = json.Replace("\n  ", "\n\t");
+            json = json.Replace("{", "");
+            json = json.Replace(Environment.NewLine + "}", ",");
+            File.WriteAllText(outputpath, json);
         }
 
         public static int UERound(double f)
