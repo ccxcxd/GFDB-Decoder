@@ -212,6 +212,8 @@ namespace GFDecoder
         public string map_route;
         public string map_code;
         public int if_random;
+
+        public Dictionary<int, int> route_types = new Dictionary<int, int>(); //2 = two way, 1 = one way
     }
 
     public class ally_team_info

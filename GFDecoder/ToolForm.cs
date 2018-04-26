@@ -77,8 +77,8 @@ namespace GFDecoder
 
             SaveToSettings();
 
-            try
-            {
+            //try
+            //{
                 var jsons = GFDecoder.LoadCatchDataJsonFile(new FileStream(jsonpath, FileMode.Open));
 
                 if (doSplit)
@@ -92,11 +92,11 @@ namespace GFDecoder
                 }
 
                 GFDecoder.ProcessJsonData(jsons, processpath);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.ToString());
+            //}
         }
 
         private void txtJson_TextChanged(object sender, EventArgs e)

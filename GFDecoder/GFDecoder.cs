@@ -213,10 +213,24 @@ namespace GFDecoder
                         mission.enemy_team_count[enemy_team_id] = 0;
                     mission.enemy_team_count[enemy_team_id]++;
                     enemyTeamInfo[enemy_team_id].spot_id = spot.id;
+                    spot.enemy_team_id = enemy_team_id;
                 }
 
                 spot.coordinator_x = Math.Abs(mission.map_eff_width) / 2 + (spot.coordinator_x - mission.map_offset_x);
                 spot.coordinator_y = Math.Abs(mission.map_eff_height) / 2  - (spot.coordinator_y - mission.map_offset_y);
+
+                foreach (var route_id in BreakStringArray(spot.route, s => int.Parse(s)))
+                {
+                    var other = spotInfo[route_id];
+                    if (!other.route_types.ContainsKey(spot.id))
+                    {
+                        var other_route_ids = BreakStringArray(other.route, s => int.Parse(s)).ToList(); ;
+                        if (other_route_ids.Contains(spot.id))
+                            spot.route_types.Add(route_id, 2); // 2 way
+                        else
+                            spot.route_types.Add(route_id, 1); // 1 way
+                    }
+                }
             }
 
             foreach (var info in missionExtraTeamInfo.Values)
@@ -249,8 +263,7 @@ namespace GFDecoder
             {
                 if (team.limit_guns != "")
                 {
-                    int[] ids = BreakStringArray(team.limit_guns, s => int.Parse(s));
-                    foreach (var id in ids)
+                    foreach (var id in BreakStringArray(team.limit_guns, s => int.Parse(s)))
                     {
                         if (gunInfo.ContainsKey(id))
                             team.drops.Add(gunInfo[id].name);
@@ -260,8 +273,7 @@ namespace GFDecoder
                 }
                 if (team.limit_equips != "")
                 {
-                    int[] ids = BreakStringArray(team.limit_equips, s => int.Parse(s));
-                    foreach (var id in ids)
+                    foreach (var id in BreakStringArray(team.limit_equips, s => int.Parse(s)))
                     {
                         if (equipInfo.ContainsKey(id))
                             team.drops.Add(equipInfo[id].name);
@@ -301,6 +313,9 @@ namespace GFDecoder
 
         public static T[] BreakStringArray<T>(string str, Converter<string, T> converter, char seperator = ',')
         {
+            if (str == "")
+                return new T[0];
+
             string[] tokens = str.Split(seperator);
             return Array.ConvertAll(tokens, converter); ;
         }
