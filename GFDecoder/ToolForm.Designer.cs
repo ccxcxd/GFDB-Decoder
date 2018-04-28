@@ -42,24 +42,24 @@
             this.lblJson = new System.Windows.Forms.Label();
             this.tabText = new System.Windows.Forms.TabPage();
             this.btnGoText = new System.Windows.Forms.Button();
-            this.rdbAvgtext2Js = new System.Windows.Forms.RadioButton();
-            this.rdbCsv2Json = new System.Windows.Forms.RadioButton();
-            this.rdbJson2Csv = new System.Windows.Forms.RadioButton();
             this.btnTextFile = new System.Windows.Forms.Button();
             this.txtTextFile = new System.Windows.Forms.TextBox();
             this.lblTextFile = new System.Windows.Forms.Label();
             this.tabImage = new System.Windows.Forms.TabPage();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtImageTo = new System.Windows.Forms.TextBox();
             this.btnGoImage = new System.Windows.Forms.Button();
+            this.txtImageFrom = new System.Windows.Forms.TextBox();
             this.txtImage = new System.Windows.Forms.TextBox();
             this.lblImage = new System.Windows.Forms.Label();
             this.btnImage = new System.Windows.Forms.Button();
             this.btnImageJson = new System.Windows.Forms.Button();
             this.txtImageJson = new System.Windows.Forms.TextBox();
             this.lblImageJson = new System.Windows.Forms.Label();
-            this.rdbProcessedJson2Csv = new System.Windows.Forms.RadioButton();
-            this.txtImageFrom = new System.Windows.Forms.TextBox();
-            this.txtImageTo = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblTextOutput = new System.Windows.Forms.Label();
+            this.txtTextOutput = new System.Windows.Forms.TextBox();
+            this.btnTextOutput = new System.Windows.Forms.Button();
+            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.tabControl.SuspendLayout();
             this.tabCatchData.SuspendLayout();
             this.tabText.SuspendLayout();
@@ -193,12 +193,11 @@
             // tabText
             // 
             this.tabText.Controls.Add(this.btnGoText);
-            this.tabText.Controls.Add(this.rdbAvgtext2Js);
-            this.tabText.Controls.Add(this.rdbCsv2Json);
-            this.tabText.Controls.Add(this.rdbProcessedJson2Csv);
-            this.tabText.Controls.Add(this.rdbJson2Csv);
+            this.tabText.Controls.Add(this.btnTextOutput);
             this.tabText.Controls.Add(this.btnTextFile);
+            this.tabText.Controls.Add(this.txtTextOutput);
             this.tabText.Controls.Add(this.txtTextFile);
+            this.tabText.Controls.Add(this.lblTextOutput);
             this.tabText.Controls.Add(this.lblTextFile);
             this.tabText.Location = new System.Drawing.Point(4, 22);
             this.tabText.Name = "tabText";
@@ -218,42 +217,6 @@
             this.btnGoText.Text = "执行";
             this.btnGoText.UseVisualStyleBackColor = true;
             this.btnGoText.Click += new System.EventHandler(this.btnGoText_Click);
-            // 
-            // rdbAvgtext2Js
-            // 
-            this.rdbAvgtext2Js.AutoSize = true;
-            this.rdbAvgtext2Js.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdbAvgtext2Js.Location = new System.Drawing.Point(85, 147);
-            this.rdbAvgtext2Js.Name = "rdbAvgtext2Js";
-            this.rdbAvgtext2Js.Size = new System.Drawing.Size(144, 24);
-            this.rdbAvgtext2Js.TabIndex = 15;
-            this.rdbAvgtext2Js.TabStop = true;
-            this.rdbAvgtext2Js.Text = "avgtext -> js/json";
-            this.rdbAvgtext2Js.UseVisualStyleBackColor = true;
-            // 
-            // rdbCsv2Json
-            // 
-            this.rdbCsv2Json.AutoSize = true;
-            this.rdbCsv2Json.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdbCsv2Json.Location = new System.Drawing.Point(85, 117);
-            this.rdbCsv2Json.Name = "rdbCsv2Json";
-            this.rdbCsv2Json.Size = new System.Drawing.Size(101, 24);
-            this.rdbCsv2Json.TabIndex = 15;
-            this.rdbCsv2Json.TabStop = true;
-            this.rdbCsv2Json.Text = "csv -> json";
-            this.rdbCsv2Json.UseVisualStyleBackColor = true;
-            // 
-            // rdbJson2Csv
-            // 
-            this.rdbJson2Csv.AutoSize = true;
-            this.rdbJson2Csv.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdbJson2Csv.Location = new System.Drawing.Point(85, 87);
-            this.rdbJson2Csv.Name = "rdbJson2Csv";
-            this.rdbJson2Csv.Size = new System.Drawing.Size(101, 24);
-            this.rdbJson2Csv.TabIndex = 15;
-            this.rdbJson2Csv.TabStop = true;
-            this.rdbJson2Csv.Text = "json -> csv";
-            this.rdbJson2Csv.UseVisualStyleBackColor = true;
             // 
             // btnTextFile
             // 
@@ -280,9 +243,9 @@
             this.lblTextFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTextFile.Location = new System.Drawing.Point(81, 35);
             this.lblTextFile.Name = "lblTextFile";
-            this.lblTextFile.Size = new System.Drawing.Size(41, 20);
+            this.lblTextFile.Size = new System.Drawing.Size(57, 20);
             this.lblTextFile.TabIndex = 12;
-            this.lblTextFile.Text = "文件";
+            this.lblTextFile.Text = "文件夹";
             // 
             // tabImage
             // 
@@ -303,6 +266,25 @@
             this.tabImage.Text = "图片";
             this.tabImage.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(209, 145);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(18, 20);
+            this.label1.TabIndex = 28;
+            this.label1.Text = "~";
+            // 
+            // txtImageTo
+            // 
+            this.txtImageTo.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtImageTo.Location = new System.Drawing.Point(234, 142);
+            this.txtImageTo.Name = "txtImageTo";
+            this.txtImageTo.Size = new System.Drawing.Size(57, 26);
+            this.txtImageTo.TabIndex = 27;
+            this.txtImageTo.Text = "99999";
+            // 
             // btnGoImage
             // 
             this.btnGoImage.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -313,6 +295,15 @@
             this.btnGoImage.Text = "执行";
             this.btnGoImage.UseVisualStyleBackColor = true;
             this.btnGoImage.Click += new System.EventHandler(this.btnGoImage_Click);
+            // 
+            // txtImageFrom
+            // 
+            this.txtImageFrom.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtImageFrom.Location = new System.Drawing.Point(146, 142);
+            this.txtImageFrom.Name = "txtImageFrom";
+            this.txtImageFrom.Size = new System.Drawing.Size(57, 26);
+            this.txtImageFrom.TabIndex = 22;
+            this.txtImageFrom.Text = "1";
             // 
             // txtImage
             // 
@@ -372,45 +363,34 @@
             this.lblImageJson.TabIndex = 18;
             this.lblImageJson.Text = "处理";
             // 
-            // rdbProcessedJson2Csv
+            // lblTextOutput
             // 
-            this.rdbProcessedJson2Csv.AutoSize = true;
-            this.rdbProcessedJson2Csv.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdbProcessedJson2Csv.Location = new System.Drawing.Point(252, 87);
-            this.rdbProcessedJson2Csv.Name = "rdbProcessedJson2Csv";
-            this.rdbProcessedJson2Csv.Size = new System.Drawing.Size(179, 24);
-            this.rdbProcessedJson2Csv.TabIndex = 15;
-            this.rdbProcessedJson2Csv.TabStop = true;
-            this.rdbProcessedJson2Csv.Text = "processed json -> csv";
-            this.rdbProcessedJson2Csv.UseVisualStyleBackColor = true;
+            this.lblTextOutput.AutoSize = true;
+            this.lblTextOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTextOutput.Location = new System.Drawing.Point(81, 89);
+            this.lblTextOutput.Name = "lblTextOutput";
+            this.lblTextOutput.Size = new System.Drawing.Size(41, 20);
+            this.lblTextOutput.TabIndex = 12;
+            this.lblTextOutput.Text = "输出";
             // 
-            // txtImageFrom
+            // txtTextOutput
             // 
-            this.txtImageFrom.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtImageFrom.Location = new System.Drawing.Point(146, 142);
-            this.txtImageFrom.Name = "txtImageFrom";
-            this.txtImageFrom.Size = new System.Drawing.Size(57, 26);
-            this.txtImageFrom.TabIndex = 22;
-            this.txtImageFrom.Text = "1";
+            this.txtTextOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtTextOutput.Location = new System.Drawing.Point(146, 86);
+            this.txtTextOutput.Name = "txtTextOutput";
+            this.txtTextOutput.Size = new System.Drawing.Size(497, 26);
+            this.txtTextOutput.TabIndex = 13;
             // 
-            // txtImageTo
+            // btnTextOutput
             // 
-            this.txtImageTo.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtImageTo.Location = new System.Drawing.Point(234, 142);
-            this.txtImageTo.Name = "txtImageTo";
-            this.txtImageTo.Size = new System.Drawing.Size(57, 26);
-            this.txtImageTo.TabIndex = 27;
-            this.txtImageTo.Text = "99999";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(209, 145);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(18, 20);
-            this.label1.TabIndex = 28;
-            this.label1.Text = "~";
+            this.btnTextOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnTextOutput.Location = new System.Drawing.Point(649, 86);
+            this.btnTextOutput.Name = "btnTextOutput";
+            this.btnTextOutput.Size = new System.Drawing.Size(62, 26);
+            this.btnTextOutput.TabIndex = 14;
+            this.btnTextOutput.Text = "浏览...";
+            this.btnTextOutput.UseVisualStyleBackColor = true;
+            this.btnTextOutput.Click += new System.EventHandler(this.btnTextOutput_Click);
             // 
             // ToolForm
             // 
@@ -450,9 +430,6 @@
         private System.Windows.Forms.Label lblJson;
         private System.Windows.Forms.TabPage tabText;
         private System.Windows.Forms.Button btnGoText;
-        private System.Windows.Forms.RadioButton rdbAvgtext2Js;
-        private System.Windows.Forms.RadioButton rdbCsv2Json;
-        private System.Windows.Forms.RadioButton rdbJson2Csv;
         private System.Windows.Forms.Button btnTextFile;
         private System.Windows.Forms.TextBox txtTextFile;
         private System.Windows.Forms.Label lblTextFile;
@@ -464,9 +441,12 @@
         private System.Windows.Forms.Button btnImageJson;
         private System.Windows.Forms.TextBox txtImageJson;
         private System.Windows.Forms.Label lblImageJson;
-        private System.Windows.Forms.RadioButton rdbProcessedJson2Csv;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtImageTo;
         private System.Windows.Forms.TextBox txtImageFrom;
+        private System.Windows.Forms.Button btnTextOutput;
+        private System.Windows.Forms.TextBox txtTextOutput;
+        private System.Windows.Forms.Label lblTextOutput;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog;
     }
 }

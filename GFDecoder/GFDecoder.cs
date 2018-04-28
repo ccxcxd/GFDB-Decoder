@@ -112,6 +112,8 @@ namespace GFDecoder
             var missionExtraTeamInfo = LoadSingleJsonDataFromFolder<mission_extra_enemy_team_info, int>("supplemental", "enemy_team_id_from");
             var campaignInfo = new Dictionary<int, campaign_info>();
 
+            StringBuilder debugLog = new StringBuilder();
+
             var eventCampaignLookup = new Dictionary<int, Tuple<int, string, int>>(); // campaign_id: (id, name, chapter)
             foreach (var eventCam in eventCampaignInfo.Values)
                 for (int i = 0; i < eventCam.campaign.Length; i++)
@@ -285,8 +287,10 @@ namespace GFDecoder
                     }
                 }
 
-                if (team.spot_id == 0)
-                    Console.Out.WriteLine("team not belong to spot: " + team.id);
+                string mission_id = "";
+                if (team.spot_id > 0)
+                    mission_id = spotInfo[team.spot_id].mission_id.ToString();
+                debugLog.AppendLine(string.Format("team_in_mission,{0},{1}", team.id, mission_id));
             }
 
             Directory.CreateDirectory(outputpath);
@@ -296,6 +300,8 @@ namespace GFDecoder
             SaveSingleJsonDataToFolder(outputpath, enemyInTeamInfo);
             SaveSingleJsonDataToFolder(outputpath, enemyCharInfo);
             SaveSingleJsonDataToFolder(outputpath, campaignInfo);
+
+            File.WriteAllText(Path.Combine(outputpath, "debug_log.txt"), debugLog.ToString());
         }
 
         public static int CalculateEnemyDifficulty(enemy_character_type_info enemy, Dictionary<string, game_config_info> game_config)
@@ -466,20 +472,39 @@ namespace GFDecoder
 
         public static void Avgtext2Js(string inputpath, string outputpath)
         {
-            var avglines = File.ReadAllLines(inputpath);
-            var avgDict = new Dictionary<string, string>();
-            foreach (var line in avglines)
+            string[] inputs;
+            if (Directory.Exists(inputpath))
             {
-                string[] items = line.Split(',');
-                if (items.Length != 2)
-                    continue;
-                avgDict.Add(items[0], items[1]);
+                inputs = Directory.GetFiles(inputpath, "*.txt");
             }
-            var json = JsonConvert.SerializeObject(avgDict, Formatting.Indented);
-            json = json.Replace("\n  ", "\n\t");
-            json = json.Replace("{", "");
-            json = json.Replace(Environment.NewLine + "}", ",");
-            File.WriteAllText(outputpath, json);
+            else if (File.Exists(inputpath))
+            {
+                inputs = new string[1];
+                inputs[0] = inputpath;
+            }
+            else
+                throw new FileNotFoundException("File not found", inputpath);
+
+            using (var output = new StreamWriter(outputpath))
+            {
+                foreach(var input in inputs)
+                {
+                    var avglines = File.ReadAllLines(input);
+                    var avgDict = new Dictionary<string, string>();
+                    foreach (var line in avglines)
+                    {
+                        string[] items = line.Split(',');
+                        if (items.Length != 2)
+                            continue;
+                        avgDict.Add(items[0], items[1]);
+                    }
+                    var json = JsonConvert.SerializeObject(avgDict, Formatting.Indented);
+                    json = json.Replace("\n  ", "\n\t");
+                    json = json.Replace("{", "");
+                    json = json.Replace(Environment.NewLine + "}", ",");
+                    output.Write(json);
+                }
+            }
         }
 
         public static int UERound(double f)

@@ -120,7 +120,7 @@
   <data name="btnGoText" xml:space="preserve">
     <value>执行</value>
   </data>
-  <data name="btnJsonText" xml:space="preserve">
+  <data name="browse" xml:space="preserve">
     <value>浏览...</value>
   </data>
   <data name="chkSplitText" xml:space="preserve">
@@ -142,7 +142,7 @@
     <value>少女前线Json处理工具</value>
   </data>
   <data name="lblTextFileText" xml:space="preserve">
-    <value>文件</value>
+    <value>文件夹</value>
   </data>
   <data name="openFileDialogAllFilter" xml:space="preserve">
     <value>所有文件 (*.*)|*.*</value>
@@ -158,5 +158,8 @@
   </data>
   <data name="tabImageText" xml:space="preserve">
     <value>图片</value>
+  </data>
+  <data name="lbltextOutputText" xml:space="preserve">
+    <value>输出</value>
   </data>
 </root>

@@ -61,20 +61,20 @@ namespace GFDecoder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 浏览....
+        /// </summary>
+        internal static string browse {
+            get {
+                return ResourceManager.GetString("browse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 执行.
         /// </summary>
         internal static string btnGoText {
             get {
                 return ResourceManager.GetString("btnGoText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 浏览....
-        /// </summary>
-        internal static string btnJsonText {
-            get {
-                return ResourceManager.GetString("btnJsonText", resourceCulture);
             }
         }
         
@@ -124,11 +124,20 @@ namespace GFDecoder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 文件.
+        ///   Looks up a localized string similar to 文件夹.
         /// </summary>
         internal static string lblTextFileText {
             get {
                 return ResourceManager.GetString("lblTextFileText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 输出.
+        /// </summary>
+        internal static string lbltextOutputText {
+            get {
+                return ResourceManager.GetString("lbltextOutputText", resourceCulture);
             }
         }
         

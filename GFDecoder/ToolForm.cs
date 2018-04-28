@@ -25,19 +25,21 @@ namespace GFDecoder
             lblJson.Text = Properties.Resources.lblJsonText;
             lblSplit.Text = Properties.Resources.lblSplitText;
             lblProcess.Text = Properties.Resources.lblProcessText;
-            btnJson.Text = Properties.Resources.btnJsonText;
+            btnJson.Text = Properties.Resources.browse;
             btnGo.Text = Properties.Resources.btnGoText;
             chkSplit.Text = Properties.Resources.chkSplitText;
             tabCatchData.Text = Properties.Resources.tabCatchDataText;
             tabText.Text = Properties.Resources.tabTextText;
-            lblTextFile.Text = Properties.Resources.tabTextText;
-            btnTextFile.Text =Properties.Resources.btnJsonText;
+            lblTextFile.Text = Properties.Resources.lblTextFileText;
+            btnTextFile.Text =Properties.Resources.browse;
+            lblTextOutput.Text = Properties.Resources.lbltextOutputText;
+            btnTextOutput.Text = Properties.Resources.browse;
             btnGoText.Text = Properties.Resources.btnGoText;
             tabImage.Text = Properties.Resources.tabImageText;
             lblJson.Text = Properties.Resources.lblJsonText;
             lblImage.Text = Properties.Resources.lblImageText;
             btnImageJson.Text = Properties.Resources.lblProcessText;
-            btnImage.Text = Properties.Resources.btnJsonText;
+            btnImage.Text = Properties.Resources.browse;
             btnGoImage.Text = Properties.Resources.btnGoText;
             #endregion
 
@@ -52,6 +54,7 @@ namespace GFDecoder
             chkSplit.Checked = Properties.Settings.Default.doSplit;
             chkSplit_CheckedChanged(null,null);
             txtTextFile.Text = Properties.Settings.Default.textFilePath;
+            txtTextOutput.Text = Properties.Settings.Default.textOutputPath;
             txtImage.Text = Properties.Settings.Default.ImagePath;
             txtImageJson.Text = Properties.Settings.Default.ImageJsonPath;
         }
@@ -63,6 +66,7 @@ namespace GFDecoder
             Properties.Settings.Default.processPath = txtProcess.Text;
             Properties.Settings.Default.doSplit = chkSplit.Checked;
             Properties.Settings.Default.textFilePath = txtTextFile.Text;
+            Properties.Settings.Default.textOutputPath = txtTextOutput.Text;
             Properties.Settings.Default.ImagePath = txtImage.Text;
             Properties.Settings.Default.ImageJsonPath = txtImageJson.Text;
             Properties.Settings.Default.Save();
@@ -132,24 +136,11 @@ namespace GFDecoder
         private void btnGoText_Click(object sender, EventArgs e)
         {
             string filepath = txtTextFile.Text;
+            string outputpath = txtTextOutput.Text;
 
             SaveToSettings();
 
-            if (rdbJson2Csv.Checked)
-            {
-                string outputpath = Path.Combine(Path.GetDirectoryName(filepath), Path.GetFileNameWithoutExtension(filepath) + ".csv");
-                GFDecoder.Json2Csv(filepath, outputpath);
-            }
-            else if (rdbProcessedJson2Csv.Checked)
-            {
-                string outputpath = Path.Combine(Path.GetDirectoryName(filepath), Path.GetFileNameWithoutExtension(filepath) + ".csv");
-                GFDecoder.ProcessedJson2Csv(filepath, outputpath);
-            }
-            else if (rdbAvgtext2Js.Checked)
-            {
-                string outputpath = Path.Combine(Path.GetDirectoryName(filepath), Path.GetFileNameWithoutExtension(filepath) + ".json");
-                GFDecoder.Avgtext2Js(filepath, outputpath);
-            }
+            GFDecoder.Avgtext2Js(filepath, outputpath);
         }
 
         private void btnImage_Click(object sender, EventArgs e)
@@ -196,9 +187,29 @@ namespace GFDecoder
             }
         }
 
+        private void DoSaveFileDialog(TextBox txtbox, string filter)
+        {
+            string filepath = txtbox.Text;
+            if (File.Exists(filepath))
+                saveFileDialog.InitialDirectory = Path.GetDirectoryName(filepath);
+
+            saveFileDialog.Filter = filter;
+            saveFileDialog.RestoreDirectory = true;
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                txtbox.Text = saveFileDialog.FileName;
+            }
+        }
+
         private void txtProcess_TextChanged(object sender, EventArgs e)
         {
             txtImageJson.Text = Path.Combine(txtProcess.Text, typeof(mission_info).Name + ",json");
+        }
+
+        private void btnTextOutput_Click(object sender, EventArgs e)
+        {
+            DoSaveFileDialog(txtTextOutput, Properties.Resources.openFileDialogAllFilter);
         }
     }
 }

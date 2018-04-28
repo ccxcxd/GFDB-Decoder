@@ -130,5 +130,17 @@ namespace GFDecoder.Properties {
                 this["ImageJsonPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string textOutputPath {
+            get {
+                return ((string)(this["textOutputPath"]));
+            }
+            set {
+                this["textOutputPath"] = value;
+            }
+        }
     }
 }
