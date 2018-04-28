@@ -119,6 +119,12 @@ namespace GFDecoder
                 for (int i = 0; i < eventCam.campaign.Length; i++)
                     eventCampaignLookup[eventCam.campaign[i]] = new Tuple<int, string, int>(eventCam.id, eventCam.name, i + 1);
 
+            // this involve in changing names, must come first
+            foreach (var enemyChar in enemyCharInfo.Values)
+            {
+                enemyChar.name = "enemy_char_name." + enemyChar.id;
+            }
+
             foreach (var mission in missionInfo.Values)
             {
                 if (mission.duplicate_type == 0)
@@ -498,11 +504,14 @@ namespace GFDecoder
                             continue;
                         avgDict.Add(items[0], items[1]);
                     }
-                    var json = JsonConvert.SerializeObject(avgDict, Formatting.Indented);
-                    json = json.Replace("\n  ", "\n\t");
-                    json = json.Replace("{", "");
-                    json = json.Replace(Environment.NewLine + "}", ",");
-                    output.Write(json);
+                    if (avgDict.Count > 0)
+                    {
+                        var json = JsonConvert.SerializeObject(avgDict, Formatting.Indented);
+                        json = json.Replace("\n  ", "\n\t");
+                        json = json.Replace("{", "");
+                        json = json.Replace(Environment.NewLine + "}", ",");
+                        output.Write(json);
+                    }
                 }
             }
         }
