@@ -42,8 +42,11 @@
             this.lblJson = new System.Windows.Forms.Label();
             this.tabText = new System.Windows.Forms.TabPage();
             this.btnGoText = new System.Windows.Forms.Button();
+            this.btnTextOutput = new System.Windows.Forms.Button();
             this.btnTextFile = new System.Windows.Forms.Button();
+            this.txtTextOutput = new System.Windows.Forms.TextBox();
             this.txtTextFile = new System.Windows.Forms.TextBox();
+            this.lblTextOutput = new System.Windows.Forms.Label();
             this.lblTextFile = new System.Windows.Forms.Label();
             this.tabImage = new System.Windows.Forms.TabPage();
             this.label1 = new System.Windows.Forms.Label();
@@ -56,9 +59,6 @@
             this.btnImageJson = new System.Windows.Forms.Button();
             this.txtImageJson = new System.Windows.Forms.TextBox();
             this.lblImageJson = new System.Windows.Forms.Label();
-            this.lblTextOutput = new System.Windows.Forms.Label();
-            this.txtTextOutput = new System.Windows.Forms.TextBox();
-            this.btnTextOutput = new System.Windows.Forms.Button();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.tabControl.SuspendLayout();
             this.tabCatchData.SuspendLayout();
@@ -218,6 +218,17 @@
             this.btnGoText.UseVisualStyleBackColor = true;
             this.btnGoText.Click += new System.EventHandler(this.btnGoText_Click);
             // 
+            // btnTextOutput
+            // 
+            this.btnTextOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnTextOutput.Location = new System.Drawing.Point(649, 86);
+            this.btnTextOutput.Name = "btnTextOutput";
+            this.btnTextOutput.Size = new System.Drawing.Size(62, 26);
+            this.btnTextOutput.TabIndex = 14;
+            this.btnTextOutput.Text = "浏览...";
+            this.btnTextOutput.UseVisualStyleBackColor = true;
+            this.btnTextOutput.Click += new System.EventHandler(this.btnTextOutput_Click);
+            // 
             // btnTextFile
             // 
             this.btnTextFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -229,6 +240,14 @@
             this.btnTextFile.UseVisualStyleBackColor = true;
             this.btnTextFile.Click += new System.EventHandler(this.btnTextFile_Click);
             // 
+            // txtTextOutput
+            // 
+            this.txtTextOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtTextOutput.Location = new System.Drawing.Point(146, 86);
+            this.txtTextOutput.Name = "txtTextOutput";
+            this.txtTextOutput.Size = new System.Drawing.Size(497, 26);
+            this.txtTextOutput.TabIndex = 13;
+            // 
             // txtTextFile
             // 
             this.txtTextFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -236,6 +255,16 @@
             this.txtTextFile.Name = "txtTextFile";
             this.txtTextFile.Size = new System.Drawing.Size(497, 26);
             this.txtTextFile.TabIndex = 13;
+            // 
+            // lblTextOutput
+            // 
+            this.lblTextOutput.AutoSize = true;
+            this.lblTextOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTextOutput.Location = new System.Drawing.Point(81, 89);
+            this.lblTextOutput.Name = "lblTextOutput";
+            this.lblTextOutput.Size = new System.Drawing.Size(41, 20);
+            this.lblTextOutput.TabIndex = 12;
+            this.lblTextOutput.Text = "输出";
             // 
             // lblTextFile
             // 
@@ -362,35 +391,6 @@
             this.lblImageJson.Size = new System.Drawing.Size(41, 20);
             this.lblImageJson.TabIndex = 18;
             this.lblImageJson.Text = "处理";
-            // 
-            // lblTextOutput
-            // 
-            this.lblTextOutput.AutoSize = true;
-            this.lblTextOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTextOutput.Location = new System.Drawing.Point(81, 89);
-            this.lblTextOutput.Name = "lblTextOutput";
-            this.lblTextOutput.Size = new System.Drawing.Size(41, 20);
-            this.lblTextOutput.TabIndex = 12;
-            this.lblTextOutput.Text = "输出";
-            // 
-            // txtTextOutput
-            // 
-            this.txtTextOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtTextOutput.Location = new System.Drawing.Point(146, 86);
-            this.txtTextOutput.Name = "txtTextOutput";
-            this.txtTextOutput.Size = new System.Drawing.Size(497, 26);
-            this.txtTextOutput.TabIndex = 13;
-            // 
-            // btnTextOutput
-            // 
-            this.btnTextOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnTextOutput.Location = new System.Drawing.Point(649, 86);
-            this.btnTextOutput.Name = "btnTextOutput";
-            this.btnTextOutput.Size = new System.Drawing.Size(62, 26);
-            this.btnTextOutput.TabIndex = 14;
-            this.btnTextOutput.Text = "浏览...";
-            this.btnTextOutput.UseVisualStyleBackColor = true;
-            this.btnTextOutput.Click += new System.EventHandler(this.btnTextOutput_Click);
             // 
             // ToolForm
             // 

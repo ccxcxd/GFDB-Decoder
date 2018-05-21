@@ -476,6 +476,45 @@ namespace GFDecoder
 
         }
 
+        public static void ProcessTextTables(string inputpath, string outputpath)
+        {
+            string textFileListPath = Path.Combine("supplemental", "text_file_list.json");
+            var textFileList = JsonConvert.DeserializeObject<Dictionary<string, List<string>>> (File.ReadAllText(textFileListPath));
+
+            using (var output = new StreamWriter(outputpath))
+            {
+                foreach (var filename in textFileList.Keys)
+                {
+                    var filepath = Path.Combine(inputpath, filename);
+                    var avglines = File.ReadAllLines(filepath);
+                    var avgDict = new Dictionary<string, string>();
+                    foreach (var line in avglines)
+                    {
+                        string[] items = line.Split(',');
+                        if (items.Length != 2)
+                            continue;
+
+                        foreach (var prefix in textFileList[filename])
+                        {
+                            if (items[0].StartsWith(prefix))
+                            {
+                                avgDict.Add(items[0], items[1]);
+                                break;
+                            }
+                        }
+                    }
+                    if (avgDict.Count > 0)
+                    {
+                        var json = JsonConvert.SerializeObject(avgDict, Formatting.Indented);
+                        json = json.Replace("\n  ", "\n\t");
+                        json = json.Replace("{", "");
+                        json = json.Replace(Environment.NewLine + "}", ",");
+                        output.Write(json);
+                    }
+                }
+            }
+        }
+
         public static void Avgtext2Js(string inputpath, string outputpath)
         {
             string[] inputs;

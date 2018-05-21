@@ -137,10 +137,25 @@ namespace GFDecoder
         {
             string filepath = txtTextFile.Text;
             string outputpath = txtTextOutput.Text;
+            string inputpath;
+
+            if (Directory.Exists(filepath))
+            {
+                inputpath = filepath;
+            }
+            else if (File.Exists(filepath))
+            {
+                inputpath = Path.GetDirectoryName(filepath);
+            }
+            else
+            {
+                MessageBox.Show("File not found: " + filepath);
+                return;
+            }
 
             SaveToSettings();
 
-            GFDecoder.Avgtext2Js(filepath, outputpath);
+            GFDecoder.ProcessTextTables(inputpath, outputpath);
         }
 
         private void btnImage_Click(object sender, EventArgs e)
