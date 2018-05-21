@@ -119,6 +119,7 @@ namespace GFDecoder
 
             var eventCampaignInfo = LoadSingleJsonDataFromFolder<event_campaign_info, int>("supplemental", "id");
             var missionExtraTeamInfo = LoadSingleJsonDataFromFolder<mission_extra_enemy_team_info, int>("supplemental", "enemy_team_id_from");
+            var enemyLimitDropInfo = LoadSingleJsonDataFromFolder<enemy_limit_drop_info, int>("supplemental", "enemy_team_id");
             var campaignInfo = new Dictionary<int, campaign_info>();
 
             StringBuilder debugLog = new StringBuilder();
@@ -279,11 +280,15 @@ namespace GFDecoder
                 }
             }
 
-            foreach (var team in enemyTeamInfo.Values)
+            foreach (var drop in enemyLimitDropInfo.Values)
             {
-                if (team.limit_guns != "")
+                if (!enemyTeamInfo.ContainsKey(drop.enemy_team_id))
+                    continue;
+
+                var team = enemyTeamInfo[drop.enemy_team_id];
+                if (drop.limit_guns.Length > 0)
                 {
-                    foreach (var id in BreakStringArray(team.limit_guns, s => int.Parse(s)))
+                    foreach (var id in drop.limit_guns)
                     {
                         if (gunInfo.ContainsKey(id))
                             team.drops.Add(gunInfo[id].name);
@@ -291,9 +296,9 @@ namespace GFDecoder
                             team.drops.Add("gun_id=" + id);
                     }
                 }
-                if (team.limit_equips != "")
+                if (drop.limit_equips.Length > 0)
                 {
-                    foreach (var id in BreakStringArray(team.limit_equips, s => int.Parse(s)))
+                    foreach (var id in drop.limit_equips)
                     {
                         if (equipInfo.ContainsKey(id))
                             team.drops.Add(equipInfo[id].name);
@@ -301,7 +306,10 @@ namespace GFDecoder
                             team.drops.Add("equip_id=" + id);
                     }
                 }
+            }
 
+            foreach (var team in enemyTeamInfo.Values)
+            {
                 string mission_id = "";
                 if (team.spot_id > 0)
                     mission_id = spotInfo[team.spot_id].mission_id.ToString();

@@ -25,8 +25,6 @@ namespace GFDecoder
         public int enemy_leader;
         public string correction_belong;
         public string correction_turn;
-        public string limit_guns;
-        public string limit_equips;
         public int ai;
         public string ai_content;
 
@@ -135,11 +133,13 @@ namespace GFDecoder
         public int sub;
         public int endless_mode;
         public int if_emergency;
+        public int force_type;
         public string name;
         public int difficulty;
         public int exp_parameter;
         public int type;
         public int enemy_ai_type;
+        public int win_spot_id;
         public int special_spot_id;
         public int turn_duration;
         public int boss_team_id;
@@ -174,10 +174,10 @@ namespace GFDecoder
         public int reinforce_ally_spot;
         public string ally_code;
         public string supply_parameter;
+        public string drop_mission_key;
         public string close_missions;
         public int mission_group_id;
         public string mission_group_draw_event;
-        public string drop_mission_key;
         public string open_mission_keys;
         public string mission_describe;
 
@@ -197,21 +197,21 @@ namespace GFDecoder
         public int id;
         public int mission_id;
         public int type;
+        public int special_eft;
         public string route;
         public int coordinator_x;
         public int coordinator_y;
-        public int belong;
-        public string hostage_info;
         public int enemy_team_id;
         public int ally_team_id;
+        public int belong;
+        public int random_get;
         public int map_type;
-        public int special_eft;
         public string curve_control;
         public string active_cycle;
         public int durability;
         public string map_route;
         public string map_code;
-        public int if_random;
+        public string hostage_info;
 
         public Dictionary<int, int> route_types = new Dictionary<int, int>(); //2 = two way, 1 = one way
     }
@@ -250,9 +250,9 @@ namespace GFDecoder
         public int id;
         public string name;
         public string en_name;
+        public string code;
         public string introduce;
         public string en_introduce;
-        public string code;
     }
 
     public class equip_info
@@ -289,6 +289,13 @@ namespace GFDecoder
         public int enemy_team_id_from;
         public int enemy_team_id_to;
         public int mission_id;
+    }
+
+    public class enemy_limit_drop_info
+    {
+        public int enemy_team_id;
+        public int[] limit_guns;
+        public int[] limit_equips;
     }
 
 }
