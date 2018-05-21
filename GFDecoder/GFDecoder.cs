@@ -46,7 +46,11 @@ namespace GFDecoder
         {
             Directory.CreateDirectory(outFolder);
             foreach (var pair in jsons)
-                File.WriteAllText(Path.Combine(outFolder, pair.Key + ".json"), pair.Value);
+            {
+                var tmp = JsonConvert.DeserializeObject<Dictionary<string, List<Dictionary<string, string>>>>(pair.Value);
+                var formatted = JsonConvert.SerializeObject(tmp, Formatting.Indented);
+                File.WriteAllText(Path.Combine(outFolder, pair.Key + ".json"), formatted);
+            }
         }
 
         public static void SplitJsonFile(string infilePath, string outFolder)
@@ -83,16 +87,21 @@ namespace GFDecoder
             return LoadSingleJsonData<T, S>(text, keyName);
         }
 
-        public static string SaveSingleJsonData<T>(Dictionary<int, T> data)
+        public static string SaveSingleJsonData<T>(Dictionary<int, T> data, bool indent)
         {
-            return JsonConvert.SerializeObject(data);
+            var formatting = indent ? Formatting.Indented : Formatting.None;
+            return JsonConvert.SerializeObject(data, formatting);
         }
 
         public static void SaveSingleJsonDataToFolder<T>(string jsonFolder, Dictionary<int, T> data)
         {
-            string datastring = SaveSingleJsonData(data);
             string classname = typeof(T).Name;
+            string datastring = SaveSingleJsonData(data, true);
             File.WriteAllText(Path.Combine(jsonFolder, classname + ".json"), datastring);
+
+            Directory.CreateDirectory(Path.Combine(jsonFolder, "min"));
+            datastring = SaveSingleJsonData(data, false);
+            File.WriteAllText(Path.Combine(jsonFolder, "min", classname + ".json"), datastring);
         }
 
         public static void ProcessJsonData(Dictionary<string, string> jsons, string outputpath)
