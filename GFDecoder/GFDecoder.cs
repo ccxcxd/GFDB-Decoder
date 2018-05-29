@@ -113,6 +113,7 @@ namespace GFDecoder
             var enemyInTeamInfo = LoadSingleJsonData<enemy_in_team_info, int>(jsons, "id");
             var enemyCharInfo = LoadSingleJsonData<enemy_character_type_info, int>(jsons, "id");
             var allyTeamInfo = LoadSingleJsonData<ally_team_info, int>(jsons, "id");
+            var gunInAllyInfo = LoadSingleJsonData<gun_in_ally_info, int>(jsons, "id");
             var gameConfigInfo = LoadSingleJsonData<game_config_info, string>(jsons, "parameter_name");
             var gunInfo = LoadSingleJsonData<gun_info, int>(jsons, "id");
             var equipInfo = LoadSingleJsonData<equip_info, int>(jsons, "id");
@@ -308,6 +309,21 @@ namespace GFDecoder
                 }
             }
 
+            foreach (var team in allyTeamInfo.Values)
+            {
+                team.leader_id = 0;
+                var ally_gun_ids = BreakStringArray(team.guns, s => int.Parse(s)).ToList();
+                foreach (var ally_gun_id in ally_gun_ids)
+                {
+                    var gia = gunInAllyInfo[ally_gun_id];
+                    if (gia.location == 1)
+                    {
+                        team.leader_id = gia.gun_id;
+                        break;
+                    }
+                }
+            }
+
             foreach (var team in enemyTeamInfo.Values)
             {
                 string mission_id = "";
@@ -323,6 +339,8 @@ namespace GFDecoder
             SaveSingleJsonDataToFolder(outputpath, enemyInTeamInfo);
             SaveSingleJsonDataToFolder(outputpath, enemyCharInfo);
             SaveSingleJsonDataToFolder(outputpath, campaignInfo);
+            SaveSingleJsonDataToFolder(outputpath, gunInfo);
+            SaveSingleJsonDataToFolder(outputpath, allyTeamInfo);
 
             File.WriteAllText(Path.Combine(outputpath, "debug_log.txt"), debugLog.ToString());
         }

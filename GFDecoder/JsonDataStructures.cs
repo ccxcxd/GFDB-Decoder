@@ -235,6 +235,31 @@ namespace GFDecoder
         public string transform_number;
         public string transform_result;
         public string icon;
+
+        public int leader_id = 0;
+    }
+
+    public class gun_in_ally_info
+    {
+        public int id;
+        public int gun_id;
+        public int gun_level;
+        public int location;
+        public int position; // order (from top left):\n 3 6 9\n2 5 8\n 1 4 7
+        public int life;
+        public int pow;
+        public int hit;
+        public int dodge;
+        public int rate;
+        public int skill1;
+        public int skill2;
+        public int number;
+        public int equip1;
+        public int equip2;
+        public int equip3;
+        public int skin;
+        public int eat_lv;
+        public int if_modification;
     }
 
     public class game_config_info
