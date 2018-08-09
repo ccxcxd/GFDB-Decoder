@@ -32,6 +32,7 @@ namespace GFDecoder
         public int difficulty = 0;
         public int spot_id = 0;
         public List<string> drops = new List<string>();
+        public int max_lv_up;
     }
 
     public class enemy_in_team_info

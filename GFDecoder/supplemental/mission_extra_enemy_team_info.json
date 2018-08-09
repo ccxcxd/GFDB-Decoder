@@ -19,6 +19,16 @@
       "enemy_team_id_from": 1770,
       "enemy_team_id_to": 1800,
       "mission_id": 10091
+    },
+    {
+      "enemy_team_id_from": 2021,
+      "enemy_team_id_to": 2035,
+      "mission_id": 10105
+    },
+    {
+      "enemy_team_id_from": 2141,
+      "enemy_team_id_to": 2143,
+      "mission_id": 10105
     }
   ]
 }

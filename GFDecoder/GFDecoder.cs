@@ -266,17 +266,31 @@ namespace GFDecoder
                 }
             }
 
+            foreach (var team in enemyTeamInfo.Values)
+            {
+                var lv_ups = BreakStringArray(team.correction_turn, s => int.Parse(s.Split(':')[1]));
+                foreach (var lv_up in lv_ups)
+                {
+                    team.max_lv_up = Math.Max(lv_up, team.max_lv_up);
+                }
+            }
+
             foreach (var member in enemyInTeamInfo.Values)
             {
                 if (!enemyCharInfo.ContainsKey(member.enemy_character_type_id))
                     continue;
+
+                if (enemyTeamInfo.ContainsKey(member.enemy_team_id))
+                {
+                    enemyTeamInfo[member.enemy_team_id].member_ids.Add(member.id);
+                    member.level += enemyTeamInfo[member.enemy_team_id].max_lv_up;
+                }
 
                 member.enemy_character = enemyCharInfo[member.enemy_character_type_id].get_info_at_level(member.level, member.number, enemyAttrInfo);
                 member.difficulty = CalculateEnemyDifficulty(member.enemy_character, gameConfigInfo);
 
                 if (enemyTeamInfo.ContainsKey(member.enemy_team_id))
                 {
-                    enemyTeamInfo[member.enemy_team_id].member_ids.Add(member.id);
                     enemyTeamInfo[member.enemy_team_id].difficulty += member.difficulty;
                 }
             }
@@ -331,6 +345,8 @@ namespace GFDecoder
                     mission_id = spotInfo[team.spot_id].mission_id.ToString();
                 debugLog.AppendLine(string.Format("team_in_mission,{0},{1}", team.id, mission_id));
             }
+
+            //GunRateTest(debugLog);
 
             Directory.CreateDirectory(outputpath);
             SaveSingleJsonDataToFolder(outputpath, missionInfo);
@@ -507,7 +523,7 @@ namespace GFDecoder
                 sb.AppendLine(line);
             }
 
-            File.WriteAllText(outputpath, sb.ToString());
+            File.WriteAllText(outputpath, sb.ToString(), Encoding.UTF8);
 
         }
 
@@ -522,7 +538,7 @@ namespace GFDecoder
                 {
                     var filepath = Path.Combine(inputpath, filename);
                     var avglines = File.ReadAllLines(filepath);
-                    var avgDict = new Dictionary<string, string>();
+                    var avgDict = new SortedDictionary<string, string>();
                     foreach (var line in avglines)
                     {
                         string[] items = line.Split(',');
@@ -598,6 +614,16 @@ namespace GFDecoder
         public static int UECeiling(double f)
         {
             return (int)Math.Ceiling((float)f);
+        }
+
+        public static void GunRateTest(StringBuilder debugLog)
+        {
+            float fixedDeltaTime = (float)1.0 / 30;
+            for (int i = 15; i <= 150; i++)
+            {
+                int rate = (int)(50f / (float)i / fixedDeltaTime);
+                debugLog.AppendLine(string.Format("gun_rate,{0},{1}", i, rate));
+            }
         }
     }
 }
