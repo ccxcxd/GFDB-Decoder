@@ -365,13 +365,15 @@ namespace GFDecoder
         {
             float[] eea  = BreakStringArray(game_config["enemy_effect_attack"].parameter_value, s => float.Parse(s));
             float[] eed = BreakStringArray(game_config["enemy_effect_defence"].parameter_value, s => float.Parse(s));
-            if (eea.Length != 4 || eed.Length != 4)
+            if (eea.Length < 5 || eed.Length < 5)
                 return -1;
 
-            // effect_attack = 22 * 扩编* (伤害* 射速 / 50 * 命中 / (命中 + 35) + 2)
-            int effect_attack = UECeiling(eea[0] * enemy.number * (enemy.pow * enemy.rate / eea[1] * enemy.hit / (enemy.hit + eea[2]) + eea[3]));
-            // effect_defence = 0.25 * (总血量* (35 + 回避) / 35 * 200 / (200 - 护甲) + 100)
-            int effect_defence = UECeiling(eed[0] * (enemy.maxlife * (eed[1] + enemy.dodge) / eed[1] * eed[2] / (eed[2] - enemy.armor) + eed[3]));
+            // effect_attack = 22 * 当前人数 * ((伤害 + 破防 * 0.85)* 射速 / 50 * 命中 / (命中 + 35) + 2)
+            // effect_attack = 22 * 人数 * ((伤害 + 破防 * 0.85)* 射速 / 50 * 命中 / (命中 + 35) + 2)
+            int effect_attack = UECeiling(eea[0] * enemy.number * ((enemy.pow + eea[4] * enemy.def_break) * enemy.rate / eea[1] * enemy.hit / (enemy.hit + eea[2]) + eea[3]));
+            // effect_defence = 0.25 * (当前总生命 * (35 + 回避) / 35 * 200 / (200 - 护甲) + 100) * (防护 * 2 - 当前防护 + 150 * 2) / (防护 - 当前防护 + 150) / 2
+            // effect_defence = 0.25 * (总生命 * (35 + 回避) / 35 * 200 / (200 - 护甲) + 100) * (防护 + 300) / 300
+            int effect_defence = UECeiling(eed[0] * (enemy.maxlife * (eed[1] + enemy.dodge) / eed[1] * eed[2] / (eed[2] - enemy.armor) + eed[3]) * (enemy.def + eed[4] * 2) / eed[4] / 2);
             int effect = UECeiling(enemy.effect_ratio * (effect_attack + effect_defence));
 
             return effect;
@@ -507,6 +509,9 @@ namespace GFDecoder
 
         public static void Json2Csv(List<Dictionary<string, string>> json, string outputpath)
         {
+            if (json.Count == 0)
+                return;
+
             StringBuilder sb = new StringBuilder();
             // title line
             var line = string.Join(",", json.First().Keys.ToArray());

@@ -17,6 +17,8 @@ namespace GFDecoder
         public double armor_piercing;
         public double armor;
         public double shield;
+        public double def;
+        public double def_break;
     }
 
     public class enemy_team_info
@@ -45,6 +47,7 @@ namespace GFDecoder
         public int level;
         public int number;
         public int is_advance;
+        public int def_percent;
 
         public int difficulty = 0;
         public enemy_character_type_info enemy_character = null;
@@ -69,6 +72,8 @@ namespace GFDecoder
         public int shield;
         public int rate;
         public int boss_hp;
+        public int def;
+        public int def_break;
         public float debuff_resistance;
         public int level;
         public string character;
@@ -76,6 +81,7 @@ namespace GFDecoder
         public int normal_attack;
         public string passive_skill;
         public float effect_ratio;
+        public string unable_buff_type;
         public string voice;
 
         public enemy_character_type_info get_info_at_level(int level, int number,
@@ -102,6 +108,8 @@ namespace GFDecoder
             result.shield = GFDecoder.UERound(this.shield * lv_to.shield / lv_from.shield);
             result.rate = this.rate;
             result.boss_hp = this.boss_hp;
+            result.def = GFDecoder.UERound(this.def * lv_to.def / lv_from.def);
+            result.def_break = GFDecoder.UERound(this.def_break * lv_to.def_break / lv_from.def_break);
             result.debuff_resistance = this.debuff_resistance;
             result.level = level;
             result.character = this.character;
@@ -109,6 +117,7 @@ namespace GFDecoder
             result.normal_attack = this.normal_attack;
             result.passive_skill = this.passive_skill;
             result.effect_ratio = this.effect_ratio;
+            result.unable_buff_type = this.unable_buff_type;
             result.voice = this.voice;
 
             return result;
@@ -130,31 +139,29 @@ namespace GFDecoder
     {
         public int id;
         public int duplicate_type;
+        public int coin_type;
         public int campaign;
         public int sub;
-        public int endless_mode;
         public int if_emergency;
-        public int force_type;
+        public int endless_mode;
+        public int special_type;
         public string name;
         public int difficulty;
         public int exp_parameter;
-        public int type;
+        public string type;
         public int enemy_ai_type;
-        public int win_spot_id;
-        public int special_spot_id;
-        public int turn_duration;
-        public int boss_team_id;
-        public int ally_boss_team_id;
-        public int coin_type;
-        public int costbp;
+        public int win_turn;
+        public string win_spot_id;
+        public string special_spot_id;
         public int expect_enemy_die_num;
         public int expect_gun_die_num;
         public int expect_turn;
+        public string boss_team_id;
+        public int turn_duration;
+        public int costbp;
         public int coin_ap;
-        public int special_type;
         public int turn_limit;
         public string limit_gun_pool;
-        public string limit_equip_pool;
         public int limit_team;
         public string map_res_name;
         public string map_information;
@@ -163,6 +170,8 @@ namespace GFDecoder
         public string adaptive_gun;
         public string fog_length;
         public string fog_color;
+        public string limit_equip_pool;
+        public string draw_event_s_id;
         public int support_available;
         public int enemy_quickmove;
         public int expect_defend_line_turn;
@@ -170,9 +179,10 @@ namespace GFDecoder
         public string title_logo;
         public string random_line_spot;
         public int order;
-        public int reinforce_ally_team;
+        public string reinforce_ally_team;
         public int reinforce_ally_turn;
-        public int reinforce_ally_spot;
+        public string reinforce_ally_spot;
+        public string ally_boss_team_id;
         public string ally_code;
         public string supply_parameter;
         public string drop_mission_key;
@@ -181,6 +191,16 @@ namespace GFDecoder
         public string mission_group_draw_event;
         public string open_mission_keys;
         public string mission_describe;
+        public string force_type;
+        public string round_config;
+        public string color_change_type;
+        public string color_change_number;
+        public string color_change_result;
+        public string spot_reset;
+        public string draw_code;
+        public int reset_drop_key_once;
+        public string close_mission_control;
+        public int limit_squad;
 
         public string index_text = "X-X";
         public List<int> spot_ids = new List<int>();
