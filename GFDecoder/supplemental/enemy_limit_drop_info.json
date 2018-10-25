@@ -1114,6 +1114,171 @@
       "enemy_team_id": 1154,
       "limit_guns": [],
       "limit_equips": [ 60, 62, 86 ]
+    },
+    {
+      "enemy_team_id": 2163,
+      "limit_guns": [ 177,210,218 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 2166,
+      "limit_guns": [ 226,209,220 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 2167,
+      "limit_guns": [ 226,209,220 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 2170,
+      "limit_guns": [ 227,201,217 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 2171,
+      "limit_guns": [ 227,201,217 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 2174,
+      "limit_guns": [ 179,210,218 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 2175,
+      "limit_guns": [ 179,210,218 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 2190,
+      "limit_guns": [ 28,209,220 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 2191,
+      "limit_guns": [ 28,209,220 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 2178,
+      "limit_guns": [ 208,201,217 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 2179,
+      "limit_guns": [ 208,201,217 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 2186,
+      "limit_guns": [ 4,210,218 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 2187,
+      "limit_guns": [ 4,210,218 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 2197,
+      "limit_guns": [ 229,209,220 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 2198,
+      "limit_guns": [ 229,209,220 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 2210,
+      "limit_guns": [ 229,209,220 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 91015,
+      "limit_guns": [ 227,209,220 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 91016,
+      "limit_guns": [ 227,209,220 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 91017,
+      "limit_guns": [ 227,209,220 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 91022,
+      "limit_guns": [ 177,201,217 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 91028,
+      "limit_guns": [ 226,210,218 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 91030,
+      "limit_guns": [ 226,210,218 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 91037,
+      "limit_guns": [ 179,209,220 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 91038,
+      "limit_guns": [ 179,209,220 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 91045,
+      "limit_guns": [ 229,201,2170 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 91046,
+      "limit_guns": [ 229,201,2170 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 91056,
+      "limit_guns": [ 208,210,218 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 91057,
+      "limit_guns": [ 208,210,218 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 91063,
+      "limit_guns": [ 4,209,220 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 91064,
+      "limit_guns": [ 4,209,220 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 91071,
+      "limit_guns": [ 28,201,217 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 91073,
+      "limit_guns": [ 28,201,217 ],
+      "limit_equips": []
+    },
+    {
+      "enemy_team_id": 91074,
+      "limit_guns": [ 28,201,217 ],
+      "limit_equips": []
     }
   ]
 }

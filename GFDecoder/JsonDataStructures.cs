@@ -203,6 +203,7 @@ namespace GFDecoder
         public int limit_squad;
 
         public string index_text = "X-X";
+        public int index_sort = 0;
         public List<int> spot_ids = new List<int>();
         public Dictionary<int, int> enemy_team_count = new Dictionary<int, int>();
         public int map_all_width = 0;
@@ -233,6 +234,7 @@ namespace GFDecoder
         public string map_route;
         public string map_code;
         public string hostage_info;
+        public string building_id;
 
         public Dictionary<int, int> route_types = new Dictionary<int, int>(); //2 = two way, 1 = one way
     }
@@ -305,6 +307,28 @@ namespace GFDecoder
     {
         public int id;
         public string name;
+    }
+
+    public class building_info
+    {
+        public int id;
+        public int defender;
+        public int defender_upper;
+        public int belong;
+        public int hold_belong;
+        public string mission_skill;
+        public string battle_skill;
+        public string condition;
+        public int is_destroy;
+        public int is_rebuild;
+        public int draw_event;
+        public string name;
+        public string code;
+        public string shifting_spot;
+        public string shifting_team;
+        public string battle_assist_range;
+        public string performance_skill;
+        public int show_info;
     }
 
     /** Custom Supplymental Data **/

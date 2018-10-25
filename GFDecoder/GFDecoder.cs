@@ -117,6 +117,7 @@ namespace GFDecoder
             var gameConfigInfo = LoadSingleJsonData<game_config_info, string>(jsons, "parameter_name");
             var gunInfo = LoadSingleJsonData<gun_info, int>(jsons, "id");
             var equipInfo = LoadSingleJsonData<equip_info, int>(jsons, "id");
+            var buildingInfo = LoadSingleJsonData<building_info, int>(jsons, "id");
 
             var eventCampaignInfo = LoadSingleJsonDataFromFolder<event_campaign_info, int>("supplemental", "id");
             var missionExtraTeamInfo = LoadSingleJsonDataFromFolder<mission_extra_enemy_team_info, int>("supplemental", "enemy_team_id_from");
@@ -144,22 +145,28 @@ namespace GFDecoder
                     {
                         // main
                         string suffix;
+                        int sortmulti;
                         switch (mission.if_emergency)
                         {
                             case 0:
                                 suffix = "";
+                                sortmulti = 0;
                                 break;
                             case 1:
                                 suffix = "E";
+                                sortmulti = 1;
                                 break;
                             case 3:
                                 suffix = "N";
+                                sortmulti = 2;
                                 break;
                             default:
                                 suffix = "";
+                                sortmulti = 0;
                                 break;
                         }
                         mission.index_text = String.Format("{0}-{1}{2}", mission.campaign, mission.sub, suffix);
+                        mission.index_sort = sortmulti* 1000000 + mission.campaign * 1000 + mission.sub;
 
                         int campaign_id = mission.campaign;
                         string campaign_name = "campaign.main" + mission.campaign;
@@ -178,6 +185,7 @@ namespace GFDecoder
                             string campaign_name = t.Item2;
                             int chapter = t.Item3;
                             mission.index_text = String.Format("{0}-{1}", chapter, mission.sub);
+                            mission.index_sort = chapter * 1000 + mission.sub;
 
                             if (!campaignInfo.ContainsKey(campaign_id))
                                 campaignInfo[campaign_id] = new campaign_info(campaign_id, 1, campaign_name);
@@ -212,7 +220,7 @@ namespace GFDecoder
 
             foreach (var spot in spotInfo.Values)
             {
-                if (spot.mission_id <= 0)
+                if (spot.mission_id <= 0 || !missionInfo.ContainsKey(spot.mission_id))
                     continue;
 
                 var mission = missionInfo[spot.mission_id];
@@ -287,7 +295,7 @@ namespace GFDecoder
                 }
 
                 member.enemy_character = enemyCharInfo[member.enemy_character_type_id].get_info_at_level(member.level, member.number, enemyAttrInfo);
-                member.difficulty = CalculateEnemyDifficulty(member.enemy_character, gameConfigInfo);
+                member.difficulty = CalculateEnemyDifficulty(member.enemy_character, gameConfigInfo, member.def_percent);
 
                 if (enemyTeamInfo.ContainsKey(member.enemy_team_id))
                 {
@@ -336,6 +344,9 @@ namespace GFDecoder
                         break;
                     }
                 }
+                // warning: should check source code
+                if (team.leader_id == 0 && ally_gun_ids.Count != 0)
+                    team.leader_id = gunInAllyInfo[ally_gun_ids[0]].gun_id;
             }
 
             foreach (var team in enemyTeamInfo.Values)
@@ -357,11 +368,12 @@ namespace GFDecoder
             SaveSingleJsonDataToFolder(outputpath, campaignInfo);
             SaveSingleJsonDataToFolder(outputpath, gunInfo);
             SaveSingleJsonDataToFolder(outputpath, allyTeamInfo);
+            SaveSingleJsonDataToFolder(outputpath, buildingInfo);
 
             File.WriteAllText(Path.Combine(outputpath, "debug_log.txt"), debugLog.ToString());
         }
 
-        public static int CalculateEnemyDifficulty(enemy_character_type_info enemy, Dictionary<string, game_config_info> game_config)
+        public static int CalculateEnemyDifficulty(enemy_character_type_info enemy, Dictionary<string, game_config_info> game_config, float def_percent)
         {
             float[] eea  = BreakStringArray(game_config["enemy_effect_attack"].parameter_value, s => float.Parse(s));
             float[] eed = BreakStringArray(game_config["enemy_effect_defence"].parameter_value, s => float.Parse(s));
@@ -369,11 +381,11 @@ namespace GFDecoder
                 return -1;
 
             // effect_attack = 22 * 当前人数 * ((伤害 + 破防 * 0.85)* 射速 / 50 * 命中 / (命中 + 35) + 2)
-            // effect_attack = 22 * 人数 * ((伤害 + 破防 * 0.85)* 射速 / 50 * 命中 / (命中 + 35) + 2)
             int effect_attack = UECeiling(eea[0] * enemy.number * ((enemy.pow + eea[4] * enemy.def_break) * enemy.rate / eea[1] * enemy.hit / (enemy.hit + eea[2]) + eea[3]));
-            // effect_defence = 0.25 * (当前总生命 * (35 + 回避) / 35 * 200 / (200 - 护甲) + 100) * (防护 * 2 - 当前防护 + 150 * 2) / (防护 - 当前防护 + 150) / 2
-            // effect_defence = 0.25 * (总生命 * (35 + 回避) / 35 * 200 / (200 - 护甲) + 100) * (防护 + 300) / 300
-            int effect_defence = UECeiling(eed[0] * (enemy.maxlife * (eed[1] + enemy.dodge) / eed[1] * eed[2] / (eed[2] - enemy.armor) + eed[3]) * (enemy.def + eed[4] * 2) / eed[4] / 2);
+            // effect_defence = 0.25 * (当前总生命 * (35 + 回避) / 35 * 200 / (200 - 护甲) + 100) * (防护 * 2 - 防护 * 当前防护% + 150 * 2) / (防护 - 防护 * 当前防护% + 150) / 2
+            float defEff = enemy.def * def_percent / 100;
+            int effect_defence = UECeiling(eed[0] * (enemy.maxlife * (eed[1] + enemy.dodge) / eed[1] * eed[2] / (eed[2] - enemy.armor) + eed[3]) * 
+                                 (enemy.def * 2 - defEff + eed[4] * 2) / (enemy.def - defEff + eed[4]) / 2);
             int effect = UECeiling(enemy.effect_ratio * (effect_attack + effect_defence));
 
             return effect;
@@ -602,9 +614,9 @@ namespace GFDecoder
                     if (avgDict.Count > 0)
                     {
                         var json = JsonConvert.SerializeObject(avgDict, Formatting.Indented);
-                        json = json.Replace("\n  ", "\n\t");
-                        json = json.Replace("{", "");
-                        json = json.Replace(Environment.NewLine + "}", ",");
+                        //json = json.Replace("\n  ", "\n\t");
+                        //json = json.Replace("{", "");
+                        //json = json.Replace(Environment.NewLine + "}", ",");
                         output.Write(json);
                     }
                 }
