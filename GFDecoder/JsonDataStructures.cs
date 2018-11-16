@@ -212,6 +212,8 @@ namespace GFDecoder
         public int map_eff_height = 0;
         public int map_offset_x = 0;
         public int map_offset_y = 0;
+        public List<int> win_objs = new List<int>();
+        public bool has_medal_obj = false;
     }
 
     public class spot_info
@@ -299,7 +301,7 @@ namespace GFDecoder
         public string name;
         public string en_name;
         public string code;
-        public string introduce;
+        //public string introduce;
         public string en_introduce;
     }
 

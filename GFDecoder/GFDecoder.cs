@@ -217,7 +217,13 @@ namespace GFDecoder
                 mission.map_eff_height = mapChopSize[1];
                 mission.map_offset_x = mapChopOffset[0];
                 mission.map_offset_y = mapChopOffset[1];
-            }
+
+                foreach (var win_obj in BreakStringArray(mission.type, s => int.Parse(s), ';'))
+                {
+                    mission.win_objs.Add(win_obj);
+                }
+                mission.has_medal_obj = mission.special_type == 0 && mission.if_emergency != 2;
+    }
 
             foreach (var spot in spotInfo.Values)
             {
