@@ -118,6 +118,7 @@ namespace GFDecoder
             var gunInfo = LoadSingleJsonData<gun_info, int>(jsons, "id");
             var equipInfo = LoadSingleJsonData<equip_info, int>(jsons, "id");
             var buildingInfo = LoadSingleJsonData<building_info, int>(jsons, "id");
+            var operationInfo = LoadSingleJsonData<operation_info, int>(jsons, "id");
 
             var eventCampaignInfo = LoadSingleJsonDataFromFolder<event_campaign_info, int>("supplemental", "id");
             var missionExtraTeamInfo = LoadSingleJsonDataFromFolder<mission_extra_enemy_team_info, int>("supplemental", "enemy_team_id_from");
@@ -357,6 +358,21 @@ namespace GFDecoder
                 debugLog.AppendLine(string.Format("team_in_mission,{0},{1}", team.id, mission_id));
             }
 
+            foreach (var oper in operationInfo.Values)
+            {
+                oper.total = oper.mp + oper.ammo + oper.mre + oper.part;
+                oper.duration_h = oper.duration / 3600d;
+                oper.mp_h = oper.mp / oper.duration_h;
+                oper.ammo_h = oper.ammo / oper.duration_h;
+                oper.mre_h = oper.mre / oper.duration_h;
+                oper.part_h = oper.part / oper.duration_h;
+
+                var items = BreakStringArray(oper.item_pool, s => int.Parse(s)).ToList();
+                foreach (var item in items)
+                    if (item != 0)
+                        oper.item_list.Add(item);
+            }
+
             //GunRateTest(debugLog);
 
             Directory.CreateDirectory(outputpath);
@@ -369,6 +385,7 @@ namespace GFDecoder
             SaveSingleJsonDataToFolder(outputpath, gunInfo);
             SaveSingleJsonDataToFolder(outputpath, allyTeamInfo);
             SaveSingleJsonDataToFolder(outputpath, buildingInfo);
+            SaveSingleJsonDataToFolder(outputpath, operationInfo);
 
             File.WriteAllText(Path.Combine(outputpath, "debug_log.txt"), debugLog.ToString());
         }
@@ -551,6 +568,7 @@ namespace GFDecoder
 
             using (var output = new StreamWriter(outputpath))
             {
+                output.Write("{");
                 foreach (var filename in textFileList.Keys)
                 {
                     var filepath = Path.Combine(inputpath, filename);
@@ -574,12 +592,12 @@ namespace GFDecoder
                     if (avgDict.Count > 0)
                     {
                         var json = JsonConvert.SerializeObject(avgDict, Formatting.Indented);
-                        json = json.Replace("\n  ", "\n\t");
                         json = json.Replace("{", "");
                         json = json.Replace(Environment.NewLine + "}", ",");
                         output.Write(json);
                     }
                 }
+                output.Write(Environment.NewLine + "  \"placeholder_table\": \"\"" + Environment.NewLine + "}");
             }
         }
 
@@ -614,9 +632,9 @@ namespace GFDecoder
                     if (avgDict.Count > 0)
                     {
                         var json = JsonConvert.SerializeObject(avgDict, Formatting.Indented);
-                        //json = json.Replace("\n  ", "\n\t");
-                        //json = json.Replace("{", "");
-                        //json = json.Replace(Environment.NewLine + "}", ",");
+                        json = json.Replace("\n  ", "\n\t");
+                        json = json.Replace("{", "");
+                        json = json.Replace(Environment.NewLine + "}", ",");
                         output.Write(json);
                     }
                 }

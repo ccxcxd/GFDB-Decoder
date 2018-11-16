@@ -331,6 +331,36 @@ namespace GFDecoder
         public int show_info;
     }
 
+    public class operation_info
+    {
+        public int id;
+        public int campaign;
+        public string name;
+        //public string description;
+        public int duration;
+        public int mp;
+        public int ammo;
+        public int mre;
+        public int part;
+        public string item_pool;
+        public int team_leader_min_level;
+        //public int guntype1_min;
+        //public int guntype2_min;
+        //public int guntype3_min;
+        //public int guntype4_min;
+        //public int guntype5_min;
+        //public int guntype6_min;
+        //public int guntype7_min;
+
+        public List<int> item_list = new List<int>();
+        public int total = 0;
+        public double duration_h = 0;
+        public double mp_h;
+        public double ammo_h;
+        public double mre_h;
+        public double part_h;
+    }
+
     /** Custom Supplymental Data **/
     public class event_campaign_info
     {
