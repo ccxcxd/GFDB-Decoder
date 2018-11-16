@@ -99,9 +99,9 @@ namespace GFDecoder
             string datastring = SaveSingleJsonData(data, true);
             File.WriteAllText(Path.Combine(jsonFolder, classname + ".json"), datastring);
 
-            Directory.CreateDirectory(Path.Combine(jsonFolder, "min"));
-            datastring = SaveSingleJsonData(data, false);
-            File.WriteAllText(Path.Combine(jsonFolder, "min", classname + ".json"), datastring);
+            //Directory.CreateDirectory(Path.Combine(jsonFolder, "min"));
+            //datastring = SaveSingleJsonData(data, false);
+            //File.WriteAllText(Path.Combine(jsonFolder, "min", classname + ".json"), datastring);
         }
 
         public static void ProcessJsonData(Dictionary<string, string> jsons, string outputpath)
