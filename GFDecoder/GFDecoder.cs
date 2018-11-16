@@ -87,13 +87,13 @@ namespace GFDecoder
             return LoadSingleJsonData<T, S>(text, keyName);
         }
 
-        public static string SaveSingleJsonData<T>(Dictionary<int, T> data, bool indent)
+        public static string SaveSingleJsonData<T, S>(Dictionary<S, T> data, bool indent)
         {
             var formatting = indent ? Formatting.Indented : Formatting.None;
             return JsonConvert.SerializeObject(data, formatting);
         }
 
-        public static void SaveSingleJsonDataToFolder<T>(string jsonFolder, Dictionary<int, T> data)
+        public static void SaveSingleJsonDataToFolder<T, S>(string jsonFolder, Dictionary<S, T> data)
         {
             string classname = typeof(T).Name;
             string datastring = SaveSingleJsonData(data, true);
@@ -300,14 +300,6 @@ namespace GFDecoder
                     enemyTeamInfo[member.enemy_team_id].member_ids.Add(member.id);
                     member.level += enemyTeamInfo[member.enemy_team_id].max_lv_up;
                 }
-
-                member.enemy_character = enemyCharInfo[member.enemy_character_type_id].get_info_at_level(member.level, member.number, enemyAttrInfo);
-                member.difficulty = CalculateEnemyDifficulty(member.enemy_character, gameConfigInfo, member.def_percent);
-
-                if (enemyTeamInfo.ContainsKey(member.enemy_team_id))
-                {
-                    enemyTeamInfo[member.enemy_team_id].difficulty += member.difficulty;
-                }
             }
 
             foreach (var drop in enemyLimitDropInfo.Values)
@@ -382,6 +374,8 @@ namespace GFDecoder
             //GunRateTest(debugLog);
 
             Directory.CreateDirectory(outputpath);
+            SaveSingleJsonDataToFolder(outputpath, gameConfigInfo);
+            SaveSingleJsonDataToFolder(outputpath, enemyAttrInfo);
             SaveSingleJsonDataToFolder(outputpath, missionInfo);
             SaveSingleJsonDataToFolder(outputpath, spotInfo);
             SaveSingleJsonDataToFolder(outputpath, enemyTeamInfo);
@@ -394,24 +388,6 @@ namespace GFDecoder
             SaveSingleJsonDataToFolder(outputpath, operationInfo);
 
             File.WriteAllText(Path.Combine(outputpath, "debug_log.txt"), debugLog.ToString());
-        }
-
-        public static int CalculateEnemyDifficulty(enemy_character_type_info enemy, Dictionary<string, game_config_info> game_config, float def_percent)
-        {
-            float[] eea  = BreakStringArray(game_config["enemy_effect_attack"].parameter_value, s => float.Parse(s));
-            float[] eed = BreakStringArray(game_config["enemy_effect_defence"].parameter_value, s => float.Parse(s));
-            if (eea.Length < 5 || eed.Length < 5)
-                return -1;
-
-            // effect_attack = 22 * 当前人数 * ((伤害 + 破防 * 0.85)* 射速 / 50 * 命中 / (命中 + 35) + 2)
-            int effect_attack = UECeiling(eea[0] * enemy.number * ((enemy.pow + eea[4] * enemy.def_break) * enemy.rate / eea[1] * enemy.hit / (enemy.hit + eea[2]) + eea[3]));
-            // effect_defence = 0.25 * (当前总生命 * (35 + 回避) / 35 * 200 / (200 - 护甲) + 100) * (防护 * 2 - 防护 * 当前防护% + 150 * 2) / (防护 - 防护 * 当前防护% + 150) / 2
-            float defEff = enemy.def * def_percent / 100;
-            int effect_defence = UECeiling(eed[0] * (enemy.maxlife * (eed[1] + enemy.dodge) / eed[1] * eed[2] / (eed[2] - enemy.armor) + eed[3]) * 
-                                 (enemy.def * 2 - defEff + eed[4] * 2) / (enemy.def - defEff + eed[4]) / 2);
-            int effect = UECeiling(enemy.effect_ratio * (effect_attack + effect_defence));
-
-            return effect;
         }
 
         public static T[] BreakStringArray<T>(string str, Converter<string, T> converter, char seperator = ',')
@@ -645,16 +621,6 @@ namespace GFDecoder
                     }
                 }
             }
-        }
-
-        public static int UERound(double f)
-        {
-            return (int)Math.Round((float)f);
-        }
-
-        public static int UECeiling(double f)
-        {
-            return (int)Math.Ceiling((float)f);
         }
 
         public static void GunRateTest(StringBuilder debugLog)

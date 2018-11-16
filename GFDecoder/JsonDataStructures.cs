@@ -31,7 +31,6 @@ namespace GFDecoder
         public string ai_content;
 
         public List<int> member_ids = new List<int>();
-        public int difficulty = 0;
         public int spot_id = 0;
         public List<string> drops = new List<string>();
         public int max_lv_up;
@@ -48,9 +47,6 @@ namespace GFDecoder
         public int number;
         public int is_advance;
         public int def_percent;
-
-        public int difficulty = 0;
-        public enemy_character_type_info enemy_character = null;
     }
 
     public class enemy_character_type_info
@@ -83,45 +79,6 @@ namespace GFDecoder
         public float effect_ratio;
         public string unable_buff_type;
         public string voice;
-
-        public enemy_character_type_info get_info_at_level(int level, int number,
-            Dictionary<int, enemy_standard_attribute_info> lv_info)
-        {
-            enemy_character_type_info result = new enemy_character_type_info();
-            enemy_standard_attribute_info lv_from = lv_info[this.level];
-            enemy_standard_attribute_info lv_to = lv_info[level];
-
-            result.id = this.id;
-            result.type = this.type;
-            result.name = this.name;
-            result.code = this.code;
-            result.maxlife = GFDecoder.UERound(this.maxlife * lv_to.maxlife / lv_from.maxlife * number);
-            result.pow = GFDecoder.UERound(this.pow * lv_to.pow / lv_from.pow);
-            result.hit = GFDecoder.UERound(this.hit * lv_to.hit / lv_from.hit);
-            result.dodge = GFDecoder.UERound(this.dodge * lv_to.dodge / lv_from.dodge);
-            result.range = this.range;
-            result.speed = this.speed;
-            result.number = number;
-            result.angle = this.angle;
-            result.armor_piercing = GFDecoder.UERound(this.armor_piercing * lv_to.armor_piercing / lv_from.armor_piercing);
-            result.armor = GFDecoder.UERound(this.armor * lv_to.armor / lv_from.armor);
-            result.shield = GFDecoder.UERound(this.shield * lv_to.shield / lv_from.shield);
-            result.rate = this.rate;
-            result.boss_hp = this.boss_hp;
-            result.def = GFDecoder.UERound(this.def * lv_to.def / lv_from.def);
-            result.def_break = GFDecoder.UERound(this.def_break * lv_to.def_break / lv_from.def_break);
-            result.debuff_resistance = this.debuff_resistance;
-            result.level = level;
-            result.character = this.character;
-            result.special_attack = this.special_attack;
-            result.normal_attack = this.normal_attack;
-            result.passive_skill = this.passive_skill;
-            result.effect_ratio = this.effect_ratio;
-            result.unable_buff_type = this.unable_buff_type;
-            result.voice = this.voice;
-
-            return result;
-        }
     }
 
     public class trial_info
