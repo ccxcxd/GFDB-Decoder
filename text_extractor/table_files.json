@@ -1,0 +1,10 @@
+{
+  "mission.txt": [ "mission-1" ],
+  "gun.txt": [ "gun-1" ],
+  "equip.txt": [ "equip-1" ],
+  "enemy_character_type.txt": [ "enemy_character_type-1" ],
+  "ally_team.txt": [ "ally_team-1" ],
+  "building.txt": [ "building-1" ],
+  "item.txt": [ "item-1" ],
+  "operation.txt": [ "operation-1" ]
+}
