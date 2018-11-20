@@ -33,7 +33,7 @@ namespace GFDecoder
         public List<int> member_ids = new List<int>();
         public int spot_id = 0;
         public List<string> drops = new List<string>();
-        public int max_lv_up;
+        public List<int> lv_up_array = new List<int>();
     }
 
     public class enemy_in_team_info

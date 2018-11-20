@@ -283,10 +283,18 @@ namespace GFDecoder
 
             foreach (var team in enemyTeamInfo.Values)
             {
-                var lv_ups = BreakStringArray(team.correction_turn, s => int.Parse(s.Split(':')[1]));
+                var lv_ups = BreakStringArray(team.correction_turn, s => s.Split(':'));
+                int curTurn = 1;
+                int lastUp = 0;
                 foreach (var lv_up in lv_ups)
                 {
-                    team.max_lv_up = Math.Max(lv_up, team.max_lv_up);
+                    var turn = int.Parse(lv_up[0]);
+                    var up = int.Parse(lv_up[1]);
+                    for (; curTurn < turn; curTurn++)
+                        team.lv_up_array.Add(lastUp);
+                    team.lv_up_array.Add(up);
+                    lastUp = up;
+                    curTurn++;
                 }
             }
 
@@ -296,10 +304,7 @@ namespace GFDecoder
                     continue;
 
                 if (enemyTeamInfo.ContainsKey(member.enemy_team_id))
-                {
                     enemyTeamInfo[member.enemy_team_id].member_ids.Add(member.id);
-                    member.level += enemyTeamInfo[member.enemy_team_id].max_lv_up;
-                }
             }
 
             foreach (var drop in enemyLimitDropInfo.Values)
