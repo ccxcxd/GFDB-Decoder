@@ -404,107 +404,6 @@ namespace GFDecoder
             return Array.ConvertAll(tokens, converter); ;
         }
 
-        public static void ProcessImages(string jsonpath, string imageFodler, string outputFolder, int missionMin, int missionMax)
-        {
-            var missionInfo = JsonConvert.DeserializeObject<Dictionary<int, mission_info>>(File.ReadAllText(jsonpath));
-
-            Directory.CreateDirectory(outputFolder);
-
-            foreach (var mission in missionInfo.Values)
-            {
-                if (mission.id < missionMin || mission.id > missionMax)
-                    continue;
-
-                var w_all = mission.map_all_width;
-                var h_all = mission.map_all_height;
-                var w_chop = mission.map_eff_width;
-                var h_chop = mission.map_eff_height;
-                var x_off = mission.map_offset_x;
-                var y_off = mission.map_offset_y;
-                var pixelFormat = PixelFormat.Format24bppRgb;
-                
-                string imageInPath = Path.Combine(imageFodler, mission.map_res_name + ".png");
-                Image originalImage = Image.FromFile(imageInPath);
-                
-
-                Bitmap scaledImage = new Bitmap(w_all, h_all, pixelFormat);
-
-                //scaledImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-
-                using (Graphics g = Graphics.FromImage(scaledImage))
-                {
-                    g.CompositingMode = CompositingMode.SourceCopy;
-                    g.CompositingQuality = CompositingQuality.HighQuality;
-                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    g.SmoothingMode = SmoothingMode.HighQuality;
-                    g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-
-                    using (var wrapMode = new ImageAttributes())
-                    {
-                        wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                        g.DrawImage(originalImage, new Rectangle(0, 0, w_all, h_all), 0, 0, originalImage.Width, originalImage.Height, GraphicsUnit.Pixel, wrapMode);
-                    }
-                }
-                originalImage.Dispose();
-
-                if (w_chop < 0)
-                {
-                    scaledImage.RotateFlip(RotateFlipType.RotateNoneFlipY);
-                    w_chop = -w_chop;
-                }
-                if (h_chop < 0)
-                {
-                    scaledImage.RotateFlip(RotateFlipType.RotateNoneFlipX);
-                    h_chop = -h_chop;
-                }
-
-                Rectangle chopRect = ConvertMapCoorinates(x_off, y_off, w_chop, h_chop, w_all * 3, h_all * 3);
-                Bitmap choppedImage = new Bitmap(chopRect.Width, chopRect.Height, pixelFormat);
-
-                using (Graphics g = Graphics.FromImage(choppedImage))
-                {
-                    chopImageHelper(g, chopRect, scaledImage, new Rectangle(0, 0, w_all, h_all), RotateFlipType.RotateNoneFlipXY);
-                    chopImageHelper(g, chopRect, scaledImage, new Rectangle(w_all, 0, w_all, h_all), RotateFlipType.RotateNoneFlipY);
-                    chopImageHelper(g, chopRect, scaledImage, new Rectangle(w_all*2, 0, w_all, h_all), RotateFlipType.RotateNoneFlipXY);
-                    chopImageHelper(g, chopRect, scaledImage, new Rectangle(0, h_all, w_all, h_all), RotateFlipType.RotateNoneFlipX);
-                    chopImageHelper(g, chopRect, scaledImage, new Rectangle(w_all, h_all, w_all, h_all), RotateFlipType.RotateNoneFlipNone);
-                    chopImageHelper(g, chopRect, scaledImage, new Rectangle(w_all*2, h_all, w_all, h_all), RotateFlipType.RotateNoneFlipX);
-                    chopImageHelper(g, chopRect, scaledImage, new Rectangle(0, h_all*2, w_all, h_all), RotateFlipType.RotateNoneFlipXY);
-                    chopImageHelper(g, chopRect, scaledImage, new Rectangle(w_all, h_all*2, w_all, h_all), RotateFlipType.RotateNoneFlipY);
-                    chopImageHelper(g, chopRect, scaledImage, new Rectangle(w_all*2, h_all*2, w_all, h_all), RotateFlipType.RotateNoneFlipXY);
-                }
-                scaledImage.Dispose();
-
-                string imageOutPath = Path.Combine(outputFolder, string.Format("mission{0}.png", mission.id));
-                choppedImage.Save(imageOutPath);
-                choppedImage.Dispose();
-            }
-        }
-
-        private static void chopImageHelper(Graphics g, Rectangle chopRect, Bitmap orgImg, Rectangle regionRect, RotateFlipType rotateFlipType)
-        {
-            Rectangle intRect = Rectangle.Intersect(chopRect, regionRect);
-            if (!intRect.IsEmpty)
-            {
-                using (Bitmap tmpImg = orgImg.Clone(new Rectangle(0, 0, orgImg.Width, orgImg.Height), orgImg.PixelFormat))
-                {
-                    tmpImg.RotateFlip(rotateFlipType);
-                    Rectangle scrRect = new Rectangle(intRect.X % regionRect.Width, intRect.Y % regionRect.Height, intRect.Width, intRect.Height);
-                    Rectangle destRect = new Rectangle(intRect.X - chopRect.X, intRect.Y - chopRect.Y, intRect.Width, intRect.Height);
-                    g.DrawImage(tmpImg, destRect, scrRect, GraphicsUnit.Pixel);
-                }
-            }
-        }
-
-        public static Rectangle ConvertMapCoorinates(int game_x, int game_y, int width, int height, int mapWidth, int mapHeight)
-        {
-            int center_x = mapWidth / 2 + game_x;
-            int center_y = mapHeight / 2 - game_y;
-            int x = center_x - width / 2;
-            int y = center_y - height/ 2;
-            return new Rectangle(x, y, width, height);
-        }
-
         public static void Json2Csv(string inputpath, string outputpath)
         {
             string jsonData = File.ReadAllText(inputpath);
@@ -513,16 +412,7 @@ namespace GFDecoder
             var json = tmp[name];
             Json2Csv(json, outputpath);
         }
-
-        public static void ProcessedJson2Csv(string inputpath, string outputpath)
-        {
-            throw new NotImplementedException();
-            string jsonData = File.ReadAllText(inputpath);
-            var tmp = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(jsonData);
-            var json = tmp.Values.ToList();
-            Json2Csv(json, outputpath);
-        }
-
+        
         public static void Json2Csv(List<Dictionary<string, string>> json, string outputpath)
         {
             if (json.Count == 0)
@@ -547,87 +437,7 @@ namespace GFDecoder
             File.WriteAllText(outputpath, sb.ToString(), Encoding.UTF8);
 
         }
-
-        public static void ProcessTextTables(string inputpath, string outputpath)
-        {
-            string textFileListPath = Path.Combine("supplemental", "text_file_list.json");
-            var textFileList = JsonConvert.DeserializeObject<Dictionary<string, List<string>>> (File.ReadAllText(textFileListPath));
-
-            using (var output = new StreamWriter(outputpath))
-            {
-                output.Write("{");
-                foreach (var filename in textFileList.Keys)
-                {
-                    var filepath = Path.Combine(inputpath, filename);
-                    var avglines = File.ReadAllLines(filepath);
-                    var avgDict = new SortedDictionary<string, string>();
-                    foreach (var line in avglines)
-                    {
-                        string[] items = line.Split(',');
-                        if (items.Length != 2)
-                            continue;
-
-                        foreach (var prefix in textFileList[filename])
-                        {
-                            if (items[0].StartsWith(prefix))
-                            {
-                                avgDict.Add(items[0], items[1]);
-                                break;
-                            }
-                        }
-                    }
-                    if (avgDict.Count > 0)
-                    {
-                        var json = JsonConvert.SerializeObject(avgDict, Formatting.Indented);
-                        json = json.Replace("{", "");
-                        json = json.Replace(Environment.NewLine + "}", ",");
-                        output.Write(json);
-                    }
-                }
-                output.Write(Environment.NewLine + "  \"placeholder_table\": \"\"" + Environment.NewLine + "}");
-            }
-        }
-
-        public static void Avgtext2Js(string inputpath, string outputpath)
-        {
-            string[] inputs;
-            if (Directory.Exists(inputpath))
-            {
-                inputs = Directory.GetFiles(inputpath, "*.txt");
-            }
-            else if (File.Exists(inputpath))
-            {
-                inputs = new string[1];
-                inputs[0] = inputpath;
-            }
-            else
-                throw new FileNotFoundException("File not found", inputpath);
-
-            using (var output = new StreamWriter(outputpath))
-            {
-                foreach(var input in inputs)
-                {
-                    var avglines = File.ReadAllLines(input);
-                    var avgDict = new Dictionary<string, string>();
-                    foreach (var line in avglines)
-                    {
-                        string[] items = line.Split(',');
-                        if (items.Length != 2)
-                            continue;
-                        avgDict.Add(items[0], items[1]);
-                    }
-                    if (avgDict.Count > 0)
-                    {
-                        var json = JsonConvert.SerializeObject(avgDict, Formatting.Indented);
-                        json = json.Replace("\n  ", "\n\t");
-                        json = json.Replace("{", "");
-                        json = json.Replace(Environment.NewLine + "}", ",");
-                        output.Write(json);
-                    }
-                }
-            }
-        }
-
+        
         public static void GunRateTest(StringBuilder debugLog)
         {
             float fixedDeltaTime = (float)1.0 / 30;

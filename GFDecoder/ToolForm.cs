@@ -29,18 +29,6 @@ namespace GFDecoder
             btnGo.Text = Properties.Resources.btnGoText;
             chkSplit.Text = Properties.Resources.chkSplitText;
             tabCatchData.Text = Properties.Resources.tabCatchDataText;
-            tabText.Text = Properties.Resources.tabTextText;
-            lblTextFile.Text = Properties.Resources.lblTextFileText;
-            btnTextFile.Text =Properties.Resources.browse;
-            lblTextOutput.Text = Properties.Resources.lbltextOutputText;
-            btnTextOutput.Text = Properties.Resources.browse;
-            btnGoText.Text = Properties.Resources.btnGoText;
-            tabImage.Text = Properties.Resources.tabImageText;
-            lblJson.Text = Properties.Resources.lblJsonText;
-            lblImage.Text = Properties.Resources.lblImageText;
-            btnImageJson.Text = Properties.Resources.lblProcessText;
-            btnImage.Text = Properties.Resources.browse;
-            btnGoImage.Text = Properties.Resources.btnGoText;
             #endregion
 
             UpdateFromSettings();
@@ -53,10 +41,6 @@ namespace GFDecoder
             txtProcess.Text = Properties.Settings.Default.processPath;
             chkSplit.Checked = Properties.Settings.Default.doSplit;
             chkSplit_CheckedChanged(null,null);
-            txtTextFile.Text = Properties.Settings.Default.textFilePath;
-            txtTextOutput.Text = Properties.Settings.Default.textOutputPath;
-            txtImage.Text = Properties.Settings.Default.ImagePath;
-            txtImageJson.Text = Properties.Settings.Default.ImageJsonPath;
         }
 
         private void SaveToSettings()
@@ -65,10 +49,6 @@ namespace GFDecoder
             Properties.Settings.Default.splitPath = txtSplit.Text;
             Properties.Settings.Default.processPath = txtProcess.Text;
             Properties.Settings.Default.doSplit = chkSplit.Checked;
-            Properties.Settings.Default.textFilePath = txtTextFile.Text;
-            Properties.Settings.Default.textOutputPath = txtTextOutput.Text;
-            Properties.Settings.Default.ImagePath = txtImage.Text;
-            Properties.Settings.Default.ImageJsonPath = txtImageJson.Text;
             Properties.Settings.Default.Save();
         }
 
@@ -127,66 +107,7 @@ namespace GFDecoder
         {
             SaveToSettings();
         }
-
-        private void btnTextFile_Click(object sender, EventArgs e)
-        {
-            DoOpenFileDialog(txtTextFile, Properties.Resources.openFileDialogAllFilter);
-        }
-
-        private void btnGoText_Click(object sender, EventArgs e)
-        {
-            string filepath = txtTextFile.Text;
-            string outputpath = txtTextOutput.Text;
-            string inputpath;
-
-            if (Directory.Exists(filepath))
-            {
-                inputpath = filepath;
-            }
-            else if (File.Exists(filepath))
-            {
-                inputpath = Path.GetDirectoryName(filepath);
-            }
-            else
-            {
-                MessageBox.Show("File not found: " + filepath);
-                return;
-            }
-
-            SaveToSettings();
-
-            GFDecoder.ProcessTextTables(inputpath, outputpath);
-        }
-
-        private void btnImage_Click(object sender, EventArgs e)
-        {
-            DoOpenFileDialog(txtImage, Properties.Resources.openFileDialogAllFilter);
-        }
-
-        private void btnGoImage_Click(object sender, EventArgs e)
-        {
-
-            SaveToSettings();
-
-            //try
-            //{
-                string jsonpath = txtImageJson.Text;
-                string imagepath = txtImage.Text;
-                int from = int.Parse(txtImageFrom.Text);
-                int to = int.Parse(txtImageTo.Text);
-            GFDecoder.ProcessImages(jsonpath, imagepath, imagepath, from, to);
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex);
-            //}
-        }
-
-        private void btnImageJson_Click(object sender, EventArgs e)
-        {
-            DoOpenFileDialog(txtImageJson, Properties.Resources.openFileDialogJsonFilter);
-        }
-
+        
         private void DoOpenFileDialog(TextBox txtbox, string filter)
         {
             string filepath = txtbox.Text;
@@ -215,16 +136,6 @@ namespace GFDecoder
             {
                 txtbox.Text = saveFileDialog.FileName;
             }
-        }
-
-        private void txtProcess_TextChanged(object sender, EventArgs e)
-        {
-            txtImageJson.Text = Path.Combine(txtProcess.Text, typeof(mission_info).Name + ",json");
-        }
-
-        private void btnTextOutput_Click(object sender, EventArgs e)
-        {
-            DoSaveFileDialog(txtTextOutput, Properties.Resources.openFileDialogAllFilter);
         }
     }
 }
