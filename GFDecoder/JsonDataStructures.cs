@@ -27,12 +27,17 @@ namespace GFDecoder
         public int enemy_leader;
         public string correction_belong;
         public string correction_turn;
+        public string limit_guns;
+        public string limit_equips;
         public int ai;
         public string ai_content;
+        public string reward_gun_pool;
+        public string equip_s_probability;
 
         public List<int> member_ids = new List<int>();
         public int spot_id = 0;
-        public List<string> drops = new List<string>();
+        public List<string> drops_limit = new List<string>();
+        public List<string> drops_reg = new List<string>();
         public List<int> lv_up_array = new List<int>();
     }
 
@@ -278,7 +283,7 @@ namespace GFDecoder
         public string mission_skill;
         public string battle_skill;
         public string condition;
-        public int is_destroy;
+        public string is_destroy;
         public int is_rebuild;
         public int draw_event;
         public string name;
@@ -348,13 +353,6 @@ namespace GFDecoder
         public int enemy_team_id_from;
         public int enemy_team_id_to;
         public int mission_id;
-    }
-
-    public class enemy_limit_drop_info
-    {
-        public int enemy_team_id;
-        public int[] limit_guns;
-        public int[] limit_equips;
     }
 
 }

@@ -36,7 +36,11 @@ namespace GFDecoder
 
                     var m = Regex.Match(line, @"{""(\w+)"":");
                     if (m.Success)
-                        result.Add(m.Groups[1].Value, line);
+                    {
+                        string name = m.Groups[1].Value;
+                        if (!result.ContainsKey(name))
+                            result.Add(name, line);
+                    }
                 }
             }
             return result;
@@ -122,7 +126,6 @@ namespace GFDecoder
 
             var eventCampaignInfo = LoadSingleJsonDataFromFolder<event_campaign_info, int>("supplemental", "id");
             var missionExtraTeamInfo = LoadSingleJsonDataFromFolder<mission_extra_enemy_team_info, int>("supplemental", "enemy_team_id_from");
-            var enemyLimitDropInfo = LoadSingleJsonDataFromFolder<enemy_limit_drop_info, int>("supplemental", "enemy_team_id");
             var campaignInfo = new Dictionary<int, campaign_info>();
 
             StringBuilder debugLog = new StringBuilder();
@@ -296,6 +299,35 @@ namespace GFDecoder
                     lastUp = up;
                     curTurn++;
                 }
+
+                foreach (var id in BreakStringArray(team.limit_guns, s => int.Parse(s)).ToList())
+                {
+                    if (gunInfo.ContainsKey(id))
+                        team.drops_limit.Add(gunInfo[id].name);
+                    else
+                        team.drops_limit.Add("gun_id=" + id);
+                }
+                foreach (var id in BreakStringArray(team.limit_equips, s => int.Parse(s)).ToList())
+                {
+                    if (equipInfo.ContainsKey(id))
+                        team.drops_limit.Add(equipInfo[id].name);
+                    else
+                        team.drops_limit.Add("equip_id=" + id);
+                }
+                foreach (var id in BreakStringArray(team.reward_gun_pool, s => int.Parse(s)).ToList())
+                {
+                    if (gunInfo.ContainsKey(id))
+                        team.drops_limit.Add(gunInfo[id].name);
+                    else
+                        team.drops_reg.Add("gun_id=" + id);
+                }
+                foreach (var id in BreakStringArray(team.equip_s_probability, s => int.Parse(s)).ToList())
+                {
+                    if (equipInfo.ContainsKey(id))
+                        team.drops_limit.Add(equipInfo[id].name);
+                    else
+                        team.drops_reg.Add("equip_id=" + id);
+                }
             }
 
             foreach (var member in enemyInTeamInfo.Values)
@@ -305,34 +337,6 @@ namespace GFDecoder
 
                 if (enemyTeamInfo.ContainsKey(member.enemy_team_id))
                     enemyTeamInfo[member.enemy_team_id].member_ids.Add(member.id);
-            }
-
-            foreach (var drop in enemyLimitDropInfo.Values)
-            {
-                if (!enemyTeamInfo.ContainsKey(drop.enemy_team_id))
-                    continue;
-
-                var team = enemyTeamInfo[drop.enemy_team_id];
-                if (drop.limit_guns.Length > 0)
-                {
-                    foreach (var id in drop.limit_guns)
-                    {
-                        if (gunInfo.ContainsKey(id))
-                            team.drops.Add(gunInfo[id].name);
-                        else
-                            team.drops.Add("gun_id=" + id);
-                    }
-                }
-                if (drop.limit_equips.Length > 0)
-                {
-                    foreach (var id in drop.limit_equips)
-                    {
-                        if (equipInfo.ContainsKey(id))
-                            team.drops.Add(equipInfo[id].name);
-                        else
-                            team.drops.Add("equip_id=" + id);
-                    }
-                }
             }
 
             foreach (var team in allyTeamInfo.Values)
