@@ -37,7 +37,7 @@ namespace GFDecoder
         public List<int> member_ids = new List<int>();
         public int spot_id = 0;
         public List<string> drops_limit = new List<string>();
-        public List<string> drops_reg = new List<string>();
+        public int[] drops_reg_count = new int[5];
         public List<int> lv_up_array = new List<int>();
     }
 
@@ -264,13 +264,15 @@ namespace GFDecoder
         public string en_name;
         public string code;
         //public string introduce;
-        public string en_introduce;
+        //public string en_introduce;
+        public int rank;
     }
 
     public class equip_info
     {
         public int id;
         public string name;
+        public int rank;
     }
 
     public class building_info

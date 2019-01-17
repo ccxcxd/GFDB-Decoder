@@ -305,28 +305,24 @@ namespace GFDecoder
                     if (gunInfo.ContainsKey(id))
                         team.drops_limit.Add(gunInfo[id].name);
                     else
-                        team.drops_limit.Add("gun_id=" + id);
+                        team.drops_limit.Add(id.ToString());
                 }
                 foreach (var id in BreakStringArray(team.limit_equips, s => int.Parse(s)).ToList())
                 {
                     if (equipInfo.ContainsKey(id))
                         team.drops_limit.Add(equipInfo[id].name);
                     else
-                        team.drops_limit.Add("equip_id=" + id);
+                        team.drops_limit.Add(id.ToString());
                 }
                 foreach (var id in BreakStringArray(team.reward_gun_pool, s => int.Parse(s)).ToList())
                 {
                     if (gunInfo.ContainsKey(id))
-                        team.drops_limit.Add(gunInfo[id].name);
-                    else
-                        team.drops_reg.Add("gun_id=" + id);
+                        team.drops_reg_count[gunInfo[id].rank - 1]++;
                 }
                 foreach (var id in BreakStringArray(team.equip_s_probability, s => int.Parse(s)).ToList())
                 {
                     if (equipInfo.ContainsKey(id))
-                        team.drops_limit.Add(equipInfo[id].name);
-                    else
-                        team.drops_reg.Add("equip_id=" + id);
+                        team.drops_reg_count[equipInfo[id].rank - 1]++;
                 }
             }
 
