@@ -447,5 +447,25 @@ namespace GFDecoder
                 debugLog.AppendLine(string.Format("gun_rate,{0},{1}", i, rate));
             }
         }
+
+        public static void DoSplitAndProcess(string jsonpath, string splitpath, string processpath)
+        {
+            var jsons = LoadCatchDataJsonFile(new FileStream(jsonpath, FileMode.Open));
+
+            if (splitpath != null)
+            {
+                SaveSplitedJsonFiles(jsons, splitpath);
+                foreach (var f in Directory.GetFiles(splitpath, "*.json"))
+                {
+                    string outputpath = Path.Combine(Path.GetDirectoryName(f), Path.GetFileNameWithoutExtension(f) + ".csv");
+                    Json2Csv(f, outputpath);
+                }
+            }
+
+            if (processpath != null)
+            {
+                ProcessJsonData(jsons, processpath);
+            }
+        }
     }
 }

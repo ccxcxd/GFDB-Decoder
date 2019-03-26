@@ -63,19 +63,10 @@ namespace GFDecoder
 
             //try
             //{
-                var jsons = GFDecoder.LoadCatchDataJsonFile(new FileStream(jsonpath, FileMode.Open));
-
                 if (doSplit)
-                {
-                    GFDecoder.SaveSplitedJsonFiles(jsons, splitpath);
-                    foreach (var f in Directory.GetFiles(splitpath, "*.json"))
-                    {
-                        string outputpath = Path.Combine(Path.GetDirectoryName(f), Path.GetFileNameWithoutExtension(f) + ".csv");
-                        GFDecoder.Json2Csv(f, outputpath);
-                    }
-                }
+                    splitpath = null;
 
-                GFDecoder.ProcessJsonData(jsons, processpath);
+                GFDecoder.DoSplitAndProcess(jsonpath, splitpath, processpath);
             //}
             //catch (Exception ex)
             //{
