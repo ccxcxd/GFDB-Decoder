@@ -39,6 +39,8 @@ namespace GFDecoder
         public List<string> drops_limit = new List<string>();
         public int[] drops_reg_count = new int[5];
         public List<int> lv_up_array = new List<int>();
+        public bool no_map = false;
+        public bool is_night = false;
     }
 
     public class enemy_in_team_info
@@ -52,6 +54,13 @@ namespace GFDecoder
         public int number;
         public int is_advance;
         public int def_percent;
+
+        public static enemy_in_team_info CopyFrom(enemy_in_team_info from, int id)
+        {
+            enemy_in_team_info to = (enemy_in_team_info)from.MemberwiseClone();
+            to.id = id;
+            return to;
+        }
     }
 
     public class enemy_character_type_info
@@ -91,7 +100,7 @@ namespace GFDecoder
         public int id;
         public int enemy_team_id;
         public int enemy_level;
-        public int enemy_type;
+        public string enemy_type;
         public int is_night;
         public int reward_voucher;
         public int prize_id;
@@ -176,6 +185,7 @@ namespace GFDecoder
         public int map_offset_y = 0;
         public List<int> win_objs = new List<int>();
         public bool has_medal_obj = false;
+        public bool no_map = false;
     }
 
     public class spot_info
@@ -327,6 +337,25 @@ namespace GFDecoder
         public double part_h;
     }
 
+    public class theater_info
+    {
+        public int id;
+        public string name;
+        public string area;
+    }
+
+    public class theater_area_info
+    {
+        public int id;
+        public string name;
+        public string enemy_group;
+        public string enemy_lv;
+        public string enemy_score;
+        public string boss;
+        public string advantage_gun;
+        public int area_mission_id;
+    }
+
     /** Custom Supplymental Data **/
     public class event_campaign_info
     {
@@ -338,7 +367,7 @@ namespace GFDecoder
     public class campaign_info
     {
         public int id;
-        public int type; // 0=main, 1=event, 2=simulation
+        public int type; // 0=main, 1=event, 2=simulation, 3=theater
         public string name;
         public List<int> mission_ids = new List<int>();
 

@@ -123,10 +123,17 @@ namespace GFDecoder
             var equipInfo = LoadSingleJsonData<equip_info, int>(jsons, "id");
             var buildingInfo = LoadSingleJsonData<building_info, int>(jsons, "id");
             var operationInfo = LoadSingleJsonData<operation_info, int>(jsons, "id");
+            var theaterInfo = LoadSingleJsonData<theater_info, int>(jsons, "id");
+            var theaterAreaInfo = LoadSingleJsonData<theater_area_info, int>(jsons, "id");
+            var trialInfo = LoadSingleJsonData<trial_info, int>(jsons, "id");
 
             var eventCampaignInfo = LoadSingleJsonDataFromFolder<event_campaign_info, int>("supplemental", "id");
             var missionExtraTeamInfo = LoadSingleJsonDataFromFolder<mission_extra_enemy_team_info, int>("supplemental", "enemy_team_id_from");
             var campaignInfo = new Dictionary<int, campaign_info>();
+
+            const int THEATER_MISSION_ID = 900000;
+            const int DEFENCE_TRIAL_CAMPAIGN_ID = 200;
+            const int DEFENCE_TRIAL_MISSION_ID = 200000;
 
             StringBuilder debugLog = new StringBuilder();
 
@@ -375,6 +382,153 @@ namespace GFDecoder
                 foreach (var item in items)
                     if (item != 0)
                         oper.item_list.Add(item);
+            }
+
+            foreach (var theater in theaterInfo.Values)
+            {
+                int campaign_id = 300 + theater.id;
+                if (campaignInfo.ContainsKey(campaign_id))
+                    throw new Exception("Compaign exist for theater " + theater.id);
+                campaignInfo[campaign_id] = new campaign_info(campaign_id, 3, theater.name);
+
+                var area_ids = BreakStringArray(theater.area, s => int.Parse(s)).ToList();
+                for (var i = 0; i < area_ids.Count; i++)
+                {
+                    var area = theaterAreaInfo[area_ids[i]];
+
+                    var mission = new mission_info
+                    {
+                        id = THEATER_MISSION_ID + area.id,
+                        name = area.name,
+                        index_text = (i + 1).ToString(),
+                        index_sort = i,
+                        no_map = true,
+                    };
+
+                    var enemy_lvs = BreakStringArray(area.enemy_lv, s => int.Parse(s)).ToList();
+                    mission.turn_limit = enemy_lvs.Count;
+
+                    var enemy_infos = BreakStringArray(area.enemy_group, s => s).ToList();
+                    if (area.boss != "")
+                        enemy_infos.Add(area.boss);
+                    for (var j = 0; j < enemy_infos.Count; j++)
+                    {
+                        var info_tokens = enemy_infos[j].Split('-');
+                        var original_team_id = int.Parse(info_tokens[0]);
+                        var is_night = int.Parse(info_tokens[1]) == 1;
+                        var original_team = enemyTeamInfo[original_team_id];
+
+                        var team = new enemy_team_info
+                        {
+                            id = mission.id * 100 + j + 1,
+                            enemy_leader = original_team.enemy_leader,
+                            no_map = true,
+                            is_night = is_night,
+                        };
+                        team.member_ids.AddRange(original_team.member_ids);
+
+                        if (area.boss != "" && j == enemy_infos.Count - 1)
+                        {
+                            // special case: boss enemy team have wrong leader, need to correct it
+                            team.enemy_leader = original_team.member_ids[0];
+                        }
+                        else
+                        {
+                            // non-boss, level will change
+                            team.lv_up_array = enemy_lvs;
+                        }
+
+                        enemyTeamInfo[team.id] = team;
+                        mission.enemy_team_count[team.id] = 0;
+                    }
+
+                    missionInfo[mission.id] = mission;
+                    campaignInfo[campaign_id].mission_ids.Add(mission.id);
+                }
+            }
+
+            { // defence trial
+                int campaign_id = DEFENCE_TRIAL_CAMPAIGN_ID;
+                if (campaignInfo.ContainsKey(campaign_id))
+                    throw new Exception("Compaign exist for defence");
+                campaignInfo[campaign_id] = new campaign_info(campaign_id, 2, "campaign.defense_drill");
+
+                int GROUPING = 10;
+                int mission_id = DEFENCE_TRIAL_MISSION_ID;
+                int enemy_in_team_id = DEFENCE_TRIAL_MISSION_ID * 100 + 1;
+                var mission = new mission_info
+                {
+                    id = mission_id,
+                    name = "campaign.defense_drill_lv",
+                    no_map = true,
+                };
+                int trial_id;
+                for (trial_id = 1; trial_id <= trialInfo.Count; trial_id++)
+                {
+                    var trial = trialInfo[trial_id];
+
+                    var original_team = enemyTeamInfo[trial.enemy_team_id];
+                    var team = new enemy_team_info
+                    {
+                        id = DEFENCE_TRIAL_MISSION_ID * 100 + trial_id,
+                        enemy_leader = original_team.enemy_leader,
+                        no_map = true,
+                        is_night = trial.is_night == 1,
+                    };
+                    if (trial.enemy_level != 0)
+                    {
+                        foreach (var member_id in original_team.member_ids)
+                        {
+                            var newMember = enemy_in_team_info.CopyFrom(enemyInTeamInfo[member_id], enemy_in_team_id);
+                            enemy_in_team_id++;
+                            newMember.level = trial.enemy_level;
+                            newMember.enemy_team_id = team.id;
+
+                            if (enemyInTeamInfo.ContainsKey(newMember.id))
+                                throw new Exception("enemyInTeamInfo exist for " + (newMember.id));
+                            enemyInTeamInfo[newMember.id] = newMember;
+                            team.member_ids.Add(newMember.id);
+                        }
+                    }
+                    else
+                    {
+                        team.member_ids.AddRange(original_team.member_ids);
+                    }
+
+                    if (enemyTeamInfo.ContainsKey(team.id))
+                        throw new Exception("enemyTeamInfo exist for " + (team.id));
+                    enemyTeamInfo[team.id] = team;
+                    mission.enemy_team_count[team.id] = 0;
+
+                    if (trial_id % GROUPING == 0)
+                    {
+                        mission.index_text = String.Format("{0}~{1}", trial_id - GROUPING + 1, trial_id);
+                        mission.index_sort = trial_id / GROUPING;
+
+                        missionInfo[mission.id] = mission;
+                        campaignInfo[campaign_id].mission_ids.Add(mission.id);
+
+                        mission_id++;
+                        mission = new mission_info
+                        {
+                            id = mission_id,
+                            name = "campaign.defense_drill_lv",
+                            no_map = true,
+                        };
+                    }
+                }
+
+                trial_id--;
+                if (trial_id % GROUPING != 0)
+                {
+                    int start = trial_id / GROUPING * GROUPING + 1;
+                    mission.index_text = String.Format("{0}~{1}", start, trial_id);
+                    mission.index_sort = trial_id / GROUPING + 1;
+
+                    missionInfo[mission.id] = mission;
+                    campaignInfo[campaign_id].mission_ids.Add(mission.id);
+                }
+
             }
 
             //GunRateTest(debugLog);
