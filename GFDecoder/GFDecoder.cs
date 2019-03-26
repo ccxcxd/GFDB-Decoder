@@ -201,7 +201,8 @@ namespace GFDecoder
                 else if (mission.duplicate_type > 0)
                 {
                     // simulation
-                    mission.index_text = "";
+                    mission.index_text = mission.sub.ToString();
+                    mission.index_sort = mission.sub;
 
                     int campaign_id = 200 + mission.campaign;
                     string campaign_name = "campaign.simulation" + mission.campaign;
