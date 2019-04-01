@@ -351,6 +351,7 @@ namespace GFDecoder
         public string enemy_group;
         public string enemy_lv;
         public string enemy_score;
+        public string occupied_enemy_lv;
         public string boss;
         public string advantage_gun;
         public int area_mission_id;

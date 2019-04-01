@@ -406,7 +406,9 @@ namespace GFDecoder
                     };
 
                     var enemy_lvs = BreakStringArray(area.enemy_lv, s => int.Parse(s)).ToList();
-                    mission.turn_limit = enemy_lvs.Count;
+                    var occupied_enemy_lv = BreakStringArray(area.occupied_enemy_lv, s => int.Parse(s)).ToList();
+                    mission.turn_limit = enemy_lvs.Count + occupied_enemy_lv.Count;
+                    var lv_up_array = enemy_lvs.Concat(occupied_enemy_lv).ToList();
 
                     var enemy_infos = BreakStringArray(area.enemy_group, s => s).ToList();
                     if (area.boss != "")
@@ -435,7 +437,7 @@ namespace GFDecoder
                         else
                         {
                             // non-boss, level will change
-                            team.lv_up_array = enemy_lvs;
+                            team.lv_up_array = lv_up_array;
                         }
 
                         enemyTeamInfo[team.id] = team;
