@@ -7,5 +7,7 @@
 {"id": 7, "name": "campaign.singularity", "campaign": [-16,-17,-18]},
 {"id": 8, "name": "campaign.djmax", "campaign": [-19,-20,-21,-22]},
 {"id": 9, "name": "campaign.turbulence", "campaign": [-24,-25,-26,-27,-28]},
-{"id": 10, "name": "campaign.isomer", "campaign": [-31]}
+{"id": 10, "name": "campaign.isomer", "campaign": [-31]},
+{"id": 11, "name": "campaign.vahall", "campaign": [-32]},
+{"id": 11, "name": "campaign.connexion", "campaign": [-33]}
 ]}
