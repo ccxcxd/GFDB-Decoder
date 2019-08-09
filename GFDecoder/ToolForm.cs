@@ -61,18 +61,18 @@ namespace GFDecoder
 
             SaveToSettings();
 
-            //try
-            //{
-                if (doSplit)
+            try
+            {
+                if (!doSplit)
                     splitpath = null;
 
                 GFDecoder.DoSplitAndProcess(jsonpath, splitpath, processpath);
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.ToString());
-            //}
-        }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+}
 
         private void txtJson_TextChanged(object sender, EventArgs e)
         {
